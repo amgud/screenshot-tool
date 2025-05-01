@@ -16,6 +16,89 @@ h2 {
   color: #1a73e8;
 }
 
+/* Popup specific styles */
+.popup-body {
+  width: 300px;
+  padding: 15px;
+}
+
+.api-settings {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.api-settings h3 {
+  margin-top: 0;
+  color: #1a73e8;
+  font-size: 16px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.input-group label {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.input-group input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.save-btn {
+  background-color: #4285f4;
+  color: white;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.save-btn:hover {
+  background-color: #3367d6;
+}
+
+.note {
+  font-size: 12px;
+  color: #666;
+  margin-top: 10px;
+  line-height: 1.4;
+}
+
+.note a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.note a:hover {
+  text-decoration: underline;
+}
+
+.open-panel-btn {
+  background-color: #4285f4;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.open-panel-btn:hover {
+  background-color: #3367d6;
+}
+
 .container {
   max-width: 800px;
   margin: 0 auto;
@@ -118,6 +201,83 @@ img {
 .action-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.success-message,
+.error-message {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 4px;
+  width: 100%;
+  text-align: center;
+  font-weight: 500;
+}
+
+.success-message {
+  background-color: #e6f7e6;
+  color: #34a853;
+  border: 1px solid #34a853;
+}
+
+.error-message {
+  background-color: #fdeded;
+  color: #ea4335;
+  border: 1px solid #ea4335;
+}
+
+/* API Settings for sidepanel */
+.api-settings-panel {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+}
+
+/* Gemini response styles */
+.response-container {
+  width: 100%;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.response-message {
+  background-color: #f0f4fe;
+  border: 1px solid #d0e0ff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.response-message h3 {
+  color: #1a73e8;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.response-text {
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #202124;
+  margin: 0;
+}
+
+.warning-message {
+  background-color: #fff8e1;
+  color: #f9a825;
+  border: 1px solid #ffe082;
+  border-radius: 4px;
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+  font-weight: 500;
+  box-sizing: border-box;
 }
 
 .success-message,
