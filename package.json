@@ -5,7 +5,7 @@
   "private": true,
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/chrome": "latest"
+    "@types/chrome": "^0.0.317"
   },
   "peerDependencies": {
     "typescript": "^5"
