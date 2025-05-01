@@ -108,15 +108,18 @@ function enableSelectionMode() {
     const devicePixelRatio = window.devicePixelRatio || 1;
 
     // Take the screenshot with chrome.tabs.captureVisibleTab
-    chrome.runtime.sendMessage({
-      action: 'areaScreenshot',
-      area: {
-        x: Math.round(rect.left * devicePixelRatio),
-        y: Math.round(rect.top * devicePixelRatio),
-        width: Math.round(rect.width * devicePixelRatio),
-        height: Math.round(rect.height * devicePixelRatio),
-      },
-      devicePixelRatio: devicePixelRatio,
-    });
+    setTimeout(() => {
+      // Send the coordinates to the background script
+      chrome.runtime.sendMessage({
+        action: 'areaScreenshot',
+        area: {
+          x: Math.round(rect.left * devicePixelRatio),
+          y: Math.round(rect.top * devicePixelRatio),
+          width: Math.round(rect.width * devicePixelRatio),
+          height: Math.round(rect.height * devicePixelRatio),
+        },
+        devicePixelRatio: devicePixelRatio,
+      });
+    }, 100);
   });
 }
