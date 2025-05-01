@@ -1,9 +1,10 @@
 console.log('Background script running.');
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'captureScreenshot') {
-    chrome.tabCapture.capture({ video: true, audio: false }, (stream) => {
-      if (!stream) {
+  if (message.action === 'captureArea') {
+    // Capture the visible tab
+    chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
+      if (chrome.runtime.lastError) {
         sendResponse({
           success: false,
           error: chrome.runtime.lastError.message,
@@ -11,50 +12,49 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return;
       }
 
-      const video = document.createElement('video');
-      video.srcObject = stream;
-      video.play();
+      // Convert base64 to blob
+      fetch(dataUrl)
+        .then((res) => res.blob())
+        .then((blob) => createImageBitmap(blob))
+        .then((imageBitmap) => {
+          // Create a canvas to crop the image
+          const canvas = new OffscreenCanvas(
+            message.area.width,
+            message.area.height
+          );
+          const ctx = canvas.getContext('2d');
 
-      video.onloadedmetadata = () => {
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
+          // Draw only the selected portion of the image
+          ctx.drawImage(
+            imageBitmap,
+            message.area.x,
+            message.area.y,
+            message.area.width,
+            message.area.height, // Source area
+            0,
+            0,
+            message.area.width,
+            message.area.height // Destination area
+          );
 
-        // Set canvas size to the video size
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
+          // Get the cropped image data
+          return canvas.convertToBlob({ type: 'image/png' });
+        })
+        .then((blob) => {
+          // Convert blob to base64
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            sendResponse({ success: true, image: reader.result });
+          };
+          reader.readAsDataURL(blob);
+        })
+        .catch((error) => {
+          console.error('Error processing screenshot:', error);
+          sendResponse({ success: false, error: error.message });
+        });
 
-        // Draw the video frame onto the canvas
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Crop the desired area (example: top-left 200x200 pixels)
-        const croppedCanvas = document.createElement('canvas');
-        const croppedContext = croppedCanvas.getContext('2d');
-        const cropWidth = 200;
-        const cropHeight = 200;
-
-        croppedCanvas.width = cropWidth;
-        croppedCanvas.height = cropHeight;
-
-        croppedContext.drawImage(
-          canvas,
-          0,
-          0,
-          cropWidth,
-          cropHeight, // Source area
-          0,
-          0,
-          cropWidth,
-          cropHeight // Destination area
-        );
-
-        // Convert the cropped canvas to a data URL
-        const imageDataUrl = croppedCanvas.toDataURL('image/png');
-
-        // Stop the stream
-        stream.getTracks().forEach((track) => track.stop());
-
-        sendResponse({ success: true, image: imageDataUrl });
-      };
+      // Return true to indicate async response
+      return true;
     });
 
     // Return true to indicate async response

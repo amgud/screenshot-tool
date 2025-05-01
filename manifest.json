@@ -1,18 +1,19 @@
 {
   "manifest_version": 3,
-  "name": "My Chrome Extension",
+  "name": "Screenshot Tool",
   "version": "1.0",
-  "description": "A blank template for a Chrome extension.",
+  "description": "Take screenshots of your browser",
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_title": "Screenshot Tool"
   },
   "side_panel": {
     "default_path": "sidepanel.html"
   },
-  "permissions": ["storage", "activeTab", "sidePanel", "tabCapture"],
+  "permissions": ["activeTab", "sidePanel", "tabs"],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
