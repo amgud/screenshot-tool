@@ -3,68 +3,6 @@
   <head>
     <title>Screenshot Tool</title>
     <link rel="stylesheet" type="text/css" href="styles.css" />
-    <style>
-      .container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 16px;
-        gap: 16px;
-      }
-      .screenshot-btn {
-        background-color: #4285f4;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background-color 0.3s;
-      }
-      .screenshot-btn:hover {
-        background-color: #3367d6;
-      }
-      .preview-area {
-        width: 100%;
-        border: 1px dashed #ccc;
-        min-height: 200px;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: center;
-        margin-top: 16px;
-      }
-      img {
-        max-width: 100%;
-      }
-      .preview-text {
-        color: grey;
-        font-style: italic;
-      }
-      .button-group {
-        display: flex;
-        gap: 10px;
-      }
-      .active {
-        background-color: #34a853;
-      }
-      .selection-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.3);
-        z-index: 9999;
-        cursor: crosshair;
-        display: none;
-      }
-      .selection-box {
-        position: absolute;
-        border: 2px dashed #4285f4;
-        background: rgba(66, 133, 244, 0.1);
-      }
-    </style>
   </head>
   <body>
     <div class="container">
