@@ -8,11 +8,44 @@ document.addEventListener('DOMContentLoaded', function () {
   // API Key elements
   const apiKeyInput = document.getElementById('apiKey');
   const saveApiKeyBtn = document.getElementById('saveApiKey');
+  const toggleApiKeyBtn = document.getElementById('toggleApiKeyBtn');
+
+  // Settings menu elements
+  const settingsToggleBtn = document.getElementById('settingsToggleBtn');
+  const settingsMenu = document.getElementById('settingsMenu');
 
   let isSelecting = false;
   let startX, startY, endX, endY;
   let selectionBox = null;
   let currentScreenshot = null;
+
+  // API Key toggle visibility
+  toggleApiKeyBtn.addEventListener('click', () => {
+    const type = apiKeyInput.getAttribute('type');
+
+    if (type === 'password') {
+      apiKeyInput.setAttribute('type', 'text');
+      toggleApiKeyBtn.textContent = '🙈';
+      toggleApiKeyBtn.title = 'Hide API Key';
+    } else {
+      apiKeyInput.setAttribute('type', 'password');
+      toggleApiKeyBtn.textContent = '👁️';
+      toggleApiKeyBtn.title = 'Show API Key';
+    }
+  });
+
+  // Settings menu toggle
+  settingsToggleBtn.addEventListener('click', () => {
+    settingsMenu.classList.toggle('open');
+    // Update icon to indicate state
+    if (settingsMenu.classList.contains('open')) {
+      settingsToggleBtn.textContent = '❌';
+      settingsToggleBtn.title = 'Close Settings';
+    } else {
+      settingsToggleBtn.textContent = '⚙️';
+      settingsToggleBtn.title = 'Settings';
+    }
+  });
 
   // Load saved API key when sidepanel opens
   chrome.storage.local.get(['geminiApiKey'], (result) => {
