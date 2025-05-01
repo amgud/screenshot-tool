@@ -53,6 +53,35 @@ h2 {
   font-size: 14px;
 }
 
+/* Password input container and toggle button */
+.password-container {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.password-container input {
+  flex: 1;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  border: none;
+  color: grey;
+  cursor: pointer;
+  width: auto;
+  padding: 4px 8px;
+  transition: color 0.2s;
+}
+
+.toggle-password-btn:hover {
+  color: #1a73e8;
+}
+
 .save-btn {
   background-color: #4285f4;
   color: white;
@@ -300,4 +329,53 @@ img {
   background-color: #fdeded;
   color: #ea4335;
   border: 1px solid #ea4335;
+}
+
+/* Header styles with settings icon */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.title-area {
+  flex-grow: 1;
+}
+
+.settings-toggle {
+  padding-top: 10px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: #1a73e8;
+  cursor: pointer;
+  width: auto;
+  height: auto;
+  padding: 10px;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+}
+
+.icon-btn:hover {
+  background-color: rgba(26, 115, 232, 0.1);
+}
+
+/* Settings menu styles */
+.settings-menu {
+  display: none;
+  margin-bottom: 16px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.settings-menu.open {
+  display: block;
+  max-height: 500px;
+  transition: max-height 0.3s ease-in;
 }

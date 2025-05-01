@@ -3,33 +3,55 @@
   <head>
     <title>Screenshot Tool</title>
     <link rel="stylesheet" type="text/css" href="styles.css" />
+    <meta charset="UTF-8" />
   </head>
   <body>
     <div class="container">
-      <h1>Screenshot Tool</h1>
-      <p>Take screenshots of your browser and view them here</p>
-
-      <!-- API Key Settings Section -->
-      <div class="api-settings-panel">
-        <h2>API Settings</h2>
-        <div class="input-group">
-          <label for="apiKey">Gemini API Key:</label>
-          <input
-            type="password"
-            id="apiKey"
-            placeholder="Enter your Gemini API key"
-          />
-          <button id="saveApiKey" class="save-btn">Save</button>
+      <div class="header">
+        <div class="title-area">
+          <h1>Screenshot Tool</h1>
+          <p>Take screenshots of your browser and view them here</p>
         </div>
-        <p class="note">
-          Your API key is stored locally and is never sent to our servers.
-        </p>
-        <p class="note">
-          Get a key at:
-          <a href="https://aistudio.google.com/app/apikey" target="_blank"
-            >Google AI Studio</a
-          >
-        </p>
+        <div class="settings-toggle">
+          <button id="settingsToggleBtn" class="icon-btn" title="Settings">
+            ⚙️
+          </button>
+        </div>
+      </div>
+
+      <!-- Settings Menu (Hidden by default) -->
+      <div id="settingsMenu" class="settings-menu">
+        <!-- API Key Settings Section (moved here) -->
+        <div class="api-settings-panel">
+          <h2>API Settings</h2>
+          <div class="input-group">
+            <label for="apiKey">Gemini API Key:</label>
+            <div class="password-container">
+              <input
+                type="password"
+                id="apiKey"
+                placeholder="Enter your Gemini API key"
+              />
+              <button
+                id="toggleApiKeyBtn"
+                class="toggle-password-btn"
+                title="Show API Key"
+              >
+                👁️
+              </button>
+            </div>
+            <button id="saveApiKey" class="save-btn">Save</button>
+          </div>
+          <p class="note">
+            Your API key is stored locally and is never sent to our servers.
+          </p>
+          <p class="note">
+            Get a key at:
+            <a href="https://aistudio.google.com/app/apikey" target="_blank"
+              >Google AI Studio</a
+            >
+          </p>
+        </div>
       </div>
 
       <div class="button-group">
