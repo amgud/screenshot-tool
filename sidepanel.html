@@ -1,10 +1,61 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My Side Panel</title>
+    <title>Screenshot Tool</title>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px;
+        gap: 16px;
+      }
+      .screenshot-btn {
+        background-color: #4285f4;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s;
+      }
+      .screenshot-btn:hover {
+        background-color: #3367d6;
+      }
+      .preview-area {
+        width: 100%;
+        border: 1px dashed #ccc;
+        min-height: 200px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        margin-top: 16px;
+      }
+      img {
+        max-width: 100%;
+      }
+      .preview-text {
+        color: grey;
+        font-style: italic;
+      }
+    </style>
   </head>
   <body>
-    <h1>Hello from the Side Panel!</h1>
-    <p>This is the content of your side panel.</p>
+    <div class="container">
+      <h1>Screenshot Tool</h1>
+      <p>Take screenshots of your browser and view them here</p>
+
+      <button id="takeScreenshotBtn" class="screenshot-btn">
+        Take Screenshot
+      </button>
+
+      <div class="preview-area" id="previewArea">
+        <p class="preview-text">Screenshot preview will appear here</p>
+      </div>
+    </div>
+    <script src="sidepanel.js"></script>
   </body>
 </html>
