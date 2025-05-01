@@ -9,6 +9,29 @@
       <h1>Screenshot Tool</h1>
       <p>Take screenshots of your browser and view them here</p>
 
+      <!-- API Key Settings Section -->
+      <div class="api-settings-panel">
+        <h2>API Settings</h2>
+        <div class="input-group">
+          <label for="apiKey">Gemini API Key:</label>
+          <input
+            type="password"
+            id="apiKey"
+            placeholder="Enter your Gemini API key"
+          />
+          <button id="saveApiKey" class="save-btn">Save</button>
+        </div>
+        <p class="note">
+          Your API key is stored locally and is never sent to our servers.
+        </p>
+        <p class="note">
+          Get a key at:
+          <a href="https://aistudio.google.com/app/apikey" target="_blank"
+            >Google AI Studio</a
+          >
+        </p>
+      </div>
+
       <div class="button-group">
         <button id="takeScreenshotBtn" class="screenshot-btn">
           Full Page Screenshot

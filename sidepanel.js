@@ -5,10 +5,43 @@ document.addEventListener('DOMContentLoaded', function () {
   const selectionOverlay = document.getElementById('selectionOverlay');
   const sendToGeminiBtn = document.getElementById('sendToGeminiBtn');
 
+  // API Key elements
+  const apiKeyInput = document.getElementById('apiKey');
+  const saveApiKeyBtn = document.getElementById('saveApiKey');
+
   let isSelecting = false;
   let startX, startY, endX, endY;
   let selectionBox = null;
   let currentScreenshot = null;
+
+  // Load saved API key when sidepanel opens
+  chrome.storage.local.get(['geminiApiKey'], (result) => {
+    if (result.geminiApiKey) {
+      apiKeyInput.value = result.geminiApiKey;
+    }
+  });
+
+  // Save API key button
+  saveApiKeyBtn.addEventListener('click', () => {
+    const apiKey = apiKeyInput.value.trim();
+
+    // Send message to background script to update the API key
+    chrome.runtime.sendMessage(
+      {
+        action: 'updateApiKey',
+        apiKey: apiKey,
+      },
+      function (response) {
+        if (response && response.success) {
+          // Visual feedback that key was saved
+          saveApiKeyBtn.textContent = 'Saved!';
+          setTimeout(() => {
+            saveApiKeyBtn.textContent = 'Save';
+          }, 2000);
+        }
+      }
+    );
+  });
 
   // Full page screenshot
   takeScreenshotBtn.addEventListener('click', () => {
@@ -48,24 +81,70 @@ document.addEventListener('DOMContentLoaded', function () {
     const base64Data = screenshotDataUrl.split(',')[1];
 
     // Create request to Gemini API
-    // Note: This is a placeholder. You'll need to implement the actual API call based on Gemini's requirements
     chrome.runtime.sendMessage(
       {
         action: 'sendToGemini',
         imageData: base64Data,
       },
       (response) => {
+        // Remove any existing response messages
+        const existingMessages = previewArea.querySelectorAll(
+          '.response-message, .success-message, .error-message'
+        );
+        existingMessages.forEach((msg) => msg.remove());
+
         if (response && response.success) {
-          // Show success message
+          // Extract the text response from Gemini
+          let geminiText = '';
+          try {
+            if (response.result?.candidates?.[0]?.content?.parts) {
+              // Extract text from the response
+              geminiText = response.result.candidates[0].content.parts
+                .filter((part) => part.text)
+                .map((part) => part.text)
+                .join('\n');
+            }
+          } catch (err) {
+            console.error('Error parsing Gemini response:', err);
+          }
+
+          // Create response container
+          const responseContainer = document.createElement('div');
+          responseContainer.className = 'response-container';
+
+          // Add success message
           const successMsg = document.createElement('div');
           successMsg.className = 'success-message';
           successMsg.textContent = 'Screenshot sent to Gemini AI successfully!';
-          previewArea.appendChild(successMsg);
+          responseContainer.appendChild(successMsg);
+
+          // Add response content if available
+          if (geminiText) {
+            const responseContent = document.createElement('div');
+            responseContent.className = 'response-message';
+            responseContent.innerHTML = '<h3>Gemini Response:</h3>';
+
+            const responseText = document.createElement('p');
+            responseText.className = 'response-text';
+            responseText.textContent = geminiText;
+
+            responseContent.appendChild(responseText);
+            responseContainer.appendChild(responseContent);
+          } else {
+            const noResponseMsg = document.createElement('div');
+            noResponseMsg.className = 'warning-message';
+            noResponseMsg.textContent =
+              'Received a response from Gemini, but no text content was found.';
+            responseContainer.appendChild(noResponseMsg);
+          }
+
+          previewArea.appendChild(responseContainer);
         } else {
           // Show error message
           const errorMsg = document.createElement('div');
           errorMsg.className = 'error-message';
           errorMsg.textContent =
+            response.error ||
             'Failed to send screenshot to Gemini AI. Please try again.';
           previewArea.appendChild(errorMsg);
         }

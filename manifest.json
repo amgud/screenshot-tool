@@ -12,7 +12,7 @@
   "side_panel": {
     "default_path": "sidepanel.html"
   },
-  "permissions": ["activeTab", "sidePanel", "tabs"],
+  "permissions": ["activeTab", "sidePanel", "tabs", "storage"],
   "host_permissions": ["https://generativelanguage.googleapis.com/*"],
   "content_scripts": [
     {
