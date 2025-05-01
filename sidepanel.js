@@ -3,10 +3,12 @@ document.addEventListener('DOMContentLoaded', function () {
   const selectAreaBtn = document.getElementById('selectAreaBtn');
   const previewArea = document.getElementById('previewArea');
   const selectionOverlay = document.getElementById('selectionOverlay');
+  const sendToGeminiBtn = document.getElementById('sendToGeminiBtn');
 
   let isSelecting = false;
   let startX, startY, endX, endY;
   let selectionBox = null;
+  let currentScreenshot = null;
 
   // Full page screenshot
   takeScreenshotBtn.addEventListener('click', () => {
@@ -28,6 +30,52 @@ document.addEventListener('DOMContentLoaded', function () {
       );
     });
   });
+
+  // Send to Gemini button
+  sendToGeminiBtn.addEventListener('click', () => {
+    if (currentScreenshot) {
+      sendScreenshotToGemini(currentScreenshot);
+    }
+  });
+
+  // Function to send screenshot to Gemini
+  function sendScreenshotToGemini(screenshotDataUrl) {
+    // Show loading state
+    sendToGeminiBtn.textContent = 'Sending...';
+    sendToGeminiBtn.disabled = true;
+
+    // Remove data URL prefix to get just the base64 data
+    const base64Data = screenshotDataUrl.split(',')[1];
+
+    // Create request to Gemini API
+    // Note: This is a placeholder. You'll need to implement the actual API call based on Gemini's requirements
+    chrome.runtime.sendMessage(
+      {
+        action: 'sendToGemini',
+        imageData: base64Data,
+      },
+      (response) => {
+        if (response && response.success) {
+          // Show success message
+          const successMsg = document.createElement('div');
+          successMsg.className = 'success-message';
+          successMsg.textContent = 'Screenshot sent to Gemini AI successfully!';
+          previewArea.appendChild(successMsg);
+        } else {
+          // Show error message
+          const errorMsg = document.createElement('div');
+          errorMsg.className = 'error-message';
+          errorMsg.textContent =
+            'Failed to send screenshot to Gemini AI. Please try again.';
+          previewArea.appendChild(errorMsg);
+        }
+
+        // Reset button state
+        sendToGeminiBtn.textContent = 'Send to Gemini AI';
+        sendToGeminiBtn.disabled = false;
+      }
+    );
+  }
 
   // Listen for messages from content script
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -106,5 +154,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const img = document.createElement('img');
     img.src = dataUrl;
     previewArea.appendChild(img);
+
+    // Store the current screenshot and enable the send button
+    currentScreenshot = dataUrl;
+    sendToGeminiBtn.disabled = false;
   }
 });
