@@ -286,6 +286,7 @@ img {
 /* Gemini response styles */
 .response-container {
   width: 100%;
+  margin-top: 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -363,11 +364,28 @@ img {
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  margin-bottom: 16px;
 }
 
 .title-area {
   flex-grow: 1;
+}
+
+/* Icon buttons in header */
+.header-icon-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Action buttons inside header */
+.header .action-buttons {
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 150px;
 }
 
 .settings-toggle {
@@ -445,6 +463,11 @@ textarea#customInstruction {
   display: block;
 }
 
+/* Hide main content when history panel is open */
+.history-panel.open + .action-buttons .icon-btn[title='Close History'] {
+  background-color: rgba(234, 67, 53, 0.1);
+}
+
 .history-panel h2 {
   margin-top: 0;
   color: #1a73e8;
@@ -504,4 +527,10 @@ textarea#customInstruction {
   color: #666;
   font-style: italic;
   text-align: center;
+}
+
+/* Main content section */
+.main-content {
+  display: block;
+  width: 100%;
 }

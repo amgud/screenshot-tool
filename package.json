@@ -4,10 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "bun run clean && bun build.js && bun build --target=browser --outdir=dist sidepanel.html background.js content.js",
+    "build": "bun build.js && bun build --target=browser --outdir=dist sidepanel.html background.js content.js",
     "watch": "bun run build --watch",
-    "clean": "rm -rf dist",
-    "package": "bun run clean && bun run build && cd dist && zip -r ../extension.zip *"
+    "package": "bun run build && cd dist && zip -r ../extension.zip *"
   },
   "devDependencies": {
     "@types/bun": "^1.2.11",

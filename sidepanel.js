@@ -47,6 +47,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const historyPanel = document.getElementById('historyPanel');
   const historyList = document.getElementById('historyList');
 
+  // Get main content element
+  const mainContent = document.getElementById('mainContent');
+
   let currentScreenshot = null;
 
   // Default instruction text
@@ -56,6 +59,9 @@ document.addEventListener('DOMContentLoaded', function () {
   let screenshotHistory = [];
   // Current active history item (if viewing from history)
   let activeHistoryItemId = null;
+
+  // Flag to track if we're viewing a history item
+  let viewingHistoryItem = false;
 
   // API Key toggle visibility
   toggleApiKeyBtn.addEventListener('click', () => {
@@ -230,11 +236,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // History panel toggle
   historyToggleBtn.addEventListener('click', () => {
+    // If we're viewing a history item, clicking the history button should reset the view
+    if (viewingHistoryItem) {
+      // Reset the history item view
+      viewingHistoryItem = false;
+      activeHistoryItemId = null;
+
+      // Clear preview area
+      previewArea.innerHTML =
+        '<p class="preview-text">Screenshot preview will appear here</p>';
+
+      // Clear response container
+      responseContainer.innerHTML = '';
+      responseContainer.style.display = 'none';
+
+      // Reset current screenshot
+      currentScreenshot = null;
+      sendToGeminiBtn.disabled = true;
+
+      // Reset button icon
+      historyToggleBtn.textContent = '📋';
+      historyToggleBtn.title = 'View History';
+
+      // Ensure main content is visible
+      mainContent.style.display = 'block';
+      return;
+    }
+
+    // Normal history panel toggle behavior
     historyPanel.classList.toggle('open');
 
-    // Load history if panel is being opened
+    // Toggle main content visibility and update button icon
     if (historyPanel.classList.contains('open')) {
+      // Hide main content when history panel is open
+      mainContent.style.display = 'none';
+      // Change button to close icon
+      historyToggleBtn.textContent = '❌';
+      historyToggleBtn.title = 'Close History';
+      // Load history when panel is opened
       loadHistoryPanel();
+    } else {
+      // Show main content when history panel is closed
+      mainContent.style.display = 'block';
+      // Change button back to history icon
+      historyToggleBtn.textContent = '📋';
+      historyToggleBtn.title = 'View History';
     }
   });
 
@@ -302,6 +348,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Set as active item
     activeHistoryItemId = itemId;
+    viewingHistoryItem = true;
 
     // Display the screenshot
     displayScreenshot(item.screenshotUrl);
@@ -310,6 +357,12 @@ document.addEventListener('DOMContentLoaded', function () {
     if (item.response) {
       responseContainer.innerHTML = '';
       responseContainer.style.display = 'block';
+
+      // Add a "from history" indicator
+      const historyIndicator = document.createElement('div');
+      historyIndicator.className = 'success-message';
+      historyIndicator.textContent = 'Viewing item from history';
+      responseContainer.appendChild(historyIndicator);
 
       const responseContent = document.createElement('div');
       responseContent.className = 'response-message';
@@ -321,16 +374,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
       responseContent.appendChild(responseText);
       responseContainer.appendChild(responseContent);
-
-      // Add a "from history" indicator
-      const historyIndicator = document.createElement('div');
-      historyIndicator.className = 'success-message';
-      historyIndicator.textContent = 'Viewing item from history';
-      responseContainer.prepend(historyIndicator);
     }
 
     // Close the history panel
     historyPanel.classList.remove('open');
+
+    // Show main content when a history item is loaded
+    mainContent.style.display = 'block';
+
+    // Keep the cross icon since we're viewing a history item
+    historyToggleBtn.textContent = '❌';
+    historyToggleBtn.title = 'Clear History View';
   }
 
   // Function to send screenshot to Gemini
