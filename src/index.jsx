@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import SidePanel from './SidePanelApp';
+import SidePanel from './SidePanel';
 
 // Connect to the chrome runtime
 chrome.runtime.connect({ name: 'sidePanel' });
