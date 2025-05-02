@@ -8,14 +8,18 @@
     "watch": "bun run build --watch",
     "package": "bun run build && cd dist && zip -r ../extension.zip *"
   },
+  "dependencies": {
+    "marked": "^15.0.11",
+    "react": "^19",
+    "react-dom": "^19"
+  },
   "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "@types/bun": "^1.2.11",
     "@types/chrome": "^0.0.317"
   },
   "peerDependencies": {
     "typescript": "^5.8.2"
-  },
-  "dependencies": {
-    "marked": "^15.0.11"
   }
 }
