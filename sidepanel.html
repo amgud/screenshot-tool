@@ -22,13 +22,15 @@
         </div>
       </div>
 
-      <!-- Main content section that will be hidden when history is open -->
+      <!-- Main content section that will be hidden when history or settings is open -->
       <div class="main-content" id="mainContent">
         <div class="button-group">
           <button id="takeScreenshotBtn" class="screenshot-btn">
-            Full Page Screenshot
+            📷 Full Page
           </button>
-          <button id="selectAreaBtn" class="screenshot-btn">Select Area</button>
+          <button id="selectAreaBtn" class="screenshot-btn">
+            🔍 Select Area
+          </button>
         </div>
 
         <div class="preview-area" id="previewArea">
@@ -55,16 +57,10 @@
         </div>
       </div>
 
-      <div class="action-buttons">
-        <button id="sendToGeminiBtn" class="action-btn" disabled>
-          Send to Gemini AI
-        </button>
-      </div>
-
-      <!-- Settings Menu (Hidden by default) -->
-      <div id="settingsMenu" class="settings-menu">
+      <!-- Settings Panel (Hidden by default) -->
+      <div id="settingsMenu" class="settings-panel">
         <!-- Custom Instructions Section -->
-        <div class="settings-panel">
+        <div class="settings-section">
           <h2>Custom Instructions</h2>
           <div class="input-group">
             <label for="customInstruction">Instructions for Gemini:</label>
@@ -85,7 +81,7 @@
         <hr class="section-divider" />
 
         <!-- API Key Settings Section -->
-        <div class="settings-panel">
+        <div class="settings-section">
           <h2>API Settings</h2>
           <div class="input-group">
             <label for="apiKey">Gemini API Key:</label>
@@ -115,6 +111,12 @@
             >
           </p>
         </div>
+      </div>
+
+      <div class="action-buttons">
+        <button id="sendToGeminiBtn" class="action-btn" disabled>
+          Send to Gemini AI
+        </button>
       </div>
     </div>
 
