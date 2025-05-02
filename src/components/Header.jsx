@@ -1,6 +1,12 @@
 import React from 'react';
 
-const Header = ({ onHistoryToggle, onSettingsToggle, viewingHistoryItem }) => {
+export default function Header({
+  onHistoryToggle,
+  onSettingsToggle,
+  viewingHistoryItem,
+  showHistoryPanel,
+  showSettingsPanel,
+}) {
   return (
     <div className="header">
       <div className="title-area">
@@ -13,18 +19,16 @@ const Header = ({ onHistoryToggle, onSettingsToggle, viewingHistoryItem }) => {
           title={viewingHistoryItem ? 'Clear History View' : 'View History'}
           onClick={onHistoryToggle}
         >
-          {viewingHistoryItem ? '❌' : '📋'}
+          {viewingHistoryItem || showHistoryPanel ? '❌' : '📋'}
         </button>
         <button
           className="icon-btn"
           title="Settings"
           onClick={onSettingsToggle}
         >
-          ⚙️
+          {showSettingsPanel ? '❌' : '⚙️'}
         </button>
       </div>
     </div>
   );
-};
-
-export default Header;
+}
