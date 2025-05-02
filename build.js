@@ -3,12 +3,8 @@ import fs from 'fs';
 // Copies static files to the dist directory
 // clean up the dist directory if it exists
 if (fs.existsSync('./dist')) {
-  fs.rmSync('./dist', { recursive: true, force: true });
+  fs.rmSync('./dist', { recursive: true });
   fs.mkdirSync('./dist');
-}
-
-// Create icons directory if it doesn't exist
-if (!fs.existsSync('./dist/icons')) {
   fs.mkdirSync('./dist/icons');
 }
 

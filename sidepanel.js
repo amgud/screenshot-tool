@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const selectionOverlay = document.getElementById('selectionOverlay');
   const sendToGeminiBtn = document.getElementById('sendToGeminiBtn');
   const responseContainer = document.getElementById('responseContainer');
+  const buttonGroup = document.querySelector('.button-group'); // Reference to button group
 
   // API Key elements
   const apiKeyInput = document.getElementById('apiKey');
@@ -78,14 +79,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Settings menu toggle
+  // Settings menu toggle - updated to behave like history panel
   settingsToggleBtn.addEventListener('click', () => {
+    // Close history panel if it's open
+    if (historyPanel.classList.contains('open')) {
+      historyPanel.classList.remove('open');
+      historyToggleBtn.textContent = '📋';
+      historyToggleBtn.title = 'View History';
+    }
+
+    // Toggle settings menu visibility
     settingsMenu.classList.toggle('open');
-    // Update icon to indicate state
+
+    // Update icon and main content visibility based on settings panel state
     if (settingsMenu.classList.contains('open')) {
+      // Hide main content when settings panel is open
+      mainContent.style.display = 'none';
+      // Change button to close icon
       settingsToggleBtn.textContent = '❌';
       settingsToggleBtn.title = 'Close Settings';
     } else {
+      // Show main content when settings panel is closed
+      mainContent.style.display = 'block';
+      // Change button back to settings icon
       settingsToggleBtn.textContent = '⚙️';
       settingsToggleBtn.title = 'Settings';
     }
@@ -242,6 +258,9 @@ document.addEventListener('DOMContentLoaded', function () {
       viewingHistoryItem = false;
       activeHistoryItemId = null;
 
+      // Show screenshot buttons again
+      buttonGroup.style.display = 'flex';
+
       // Clear preview area
       previewArea.innerHTML =
         '<p class="preview-text">Screenshot preview will appear here</p>';
@@ -261,6 +280,13 @@ document.addEventListener('DOMContentLoaded', function () {
       // Ensure main content is visible
       mainContent.style.display = 'block';
       return;
+    }
+
+    // Close settings panel if it's open
+    if (settingsMenu.classList.contains('open')) {
+      settingsMenu.classList.remove('open');
+      settingsToggleBtn.textContent = '⚙️';
+      settingsToggleBtn.title = 'Settings';
     }
 
     // Normal history panel toggle behavior
@@ -349,6 +375,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Set as active item
     activeHistoryItemId = itemId;
     viewingHistoryItem = true;
+
+    // Hide screenshot buttons when viewing a history item
+    buttonGroup.style.display = 'none';
 
     // Display the screenshot
     displayScreenshot(item.screenshotUrl);

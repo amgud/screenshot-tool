@@ -365,7 +365,6 @@ img {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
 }
 
 .title-area {
@@ -429,6 +428,31 @@ img {
   padding: 16px;
 }
 
+/* Settings panel styles */
+.settings-panel {
+  display: none;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+}
+
+.settings-panel.open {
+  display: block;
+}
+
+.settings-section {
+  margin-bottom: 20px;
+}
+
+.settings-panel h2 {
+  margin-top: 0;
+  color: #1a73e8;
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
 /* Section divider styles */
 .section-divider {
   margin: 20px 0;
@@ -453,10 +477,7 @@ textarea#customInstruction {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 16px;
-  margin-top: 16px;
   border: 1px solid #e0e0e0;
-  max-height: 400px;
-  overflow-y: auto;
 }
 
 .history-panel.open {
