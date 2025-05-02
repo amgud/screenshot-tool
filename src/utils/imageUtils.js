@@ -39,12 +39,13 @@ export const processAreaScreenshot = (
       // Create an image from the data URL
       const img = new Image();
       img.onload = () => {
-        // Scale the selection area by the device pixel ratio
+        // No need to scale the area by device pixel ratio again
+        // as it's already scaled in screenshotUtils.js
         const scaledArea = {
-          x: area.x * devicePixelRatio,
-          y: area.y * devicePixelRatio,
-          width: area.width * devicePixelRatio,
-          height: area.height * devicePixelRatio,
+          x: area.x,
+          y: area.y,
+          width: area.width,
+          height: area.height,
         };
 
         // Create a canvas to draw the cropped image

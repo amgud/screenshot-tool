@@ -1,5 +1,4 @@
 import fs from 'fs';
-import { spawnSync } from 'child_process';
 
 // Copies static files to the dist directory
 // clean up the dist directory if it exists
@@ -15,7 +14,6 @@ const staticFiles = [
   { src: './icons/icon-16.png', dest: './dist/icons/icon-16.png' },
   { src: './icons/icon-48.png', dest: './dist/icons/icon-48.png' },
   { src: './icons/icon-128.png', dest: './dist/icons/icon-128.png' },
-  { src: './styles.css', dest: './dist/styles.css' },
 ];
 
 // Copy all files
@@ -28,26 +26,4 @@ staticFiles.forEach((file) => {
   }
 });
 
-// Build React application
-console.log('Building React application...');
-const buildResult = spawnSync(
-  'bun',
-  [
-    'build',
-    '--target=browser',
-    '--outdir=dist',
-    '--entry-naming=[dir]/[name].[ext]',
-    'sidepanel.html',
-    'background.js',
-    'content.js',
-    'src/index.jsx',
-  ],
-  { stdio: 'inherit' }
-);
-
-if (buildResult.error) {
-  console.error('Error building React application:', buildResult.error);
-  process.exit(1);
-}
-
-console.log('Build completed successfully');
+console.log('Static files copied successfully');
