@@ -146,22 +146,78 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Full page screenshot
   takeScreenshotBtn.addEventListener('click', () => {
-    chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
-      displayScreenshot(dataUrl);
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+      if (!tabs || tabs.length === 0) {
+        console.error('No active tab found');
+        return;
+      }
+
+      try {
+        // Capture the screenshot without requiring explicit permission request
+        // Since we have <all_urls> in host_permissions, this will work across tabs
+        chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
+          if (chrome.runtime.lastError) {
+            console.error(
+              'Error capturing screenshot:',
+              chrome.runtime.lastError
+            );
+            showErrorMessage(
+              'Failed to capture screenshot: ' +
+                chrome.runtime.lastError.message
+            );
+            return;
+          }
+          displayScreenshot(dataUrl);
+        });
+      } catch (error) {
+        console.error('Screenshot capture failed:', error);
+        showErrorMessage('Failed to capture screenshot: ' + error.message);
+      }
     });
   });
 
+  // Add a helper function to show error messages
+  function showErrorMessage(message) {
+    responseContainer.innerHTML = '';
+    responseContainer.style.display = 'block';
+
+    const errorMsg = document.createElement('div');
+    errorMsg.className = 'error-message';
+    errorMsg.textContent = message;
+    responseContainer.appendChild(errorMsg);
+  }
+
   // Area selection screenshot
   selectAreaBtn.addEventListener('click', () => {
-    // Send message to content script to enable selection mode
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        { action: 'enableSelection' },
-        (response) => {
-          console.log('Selection mode enabled', response);
-        }
-      );
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+      if (!tabs || tabs.length === 0) {
+        console.error('No active tab found');
+        return;
+      }
+
+      try {
+        // Send message to content script to enable selection mode
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          { action: 'enableSelection' },
+          (response) => {
+            if (chrome.runtime.lastError) {
+              console.error(
+                'Error enabling selection:',
+                chrome.runtime.lastError
+              );
+              showErrorMessage(
+                'Error enabling selection: ' + chrome.runtime.lastError.message
+              );
+              return;
+            }
+            console.log('Selection mode enabled', response);
+          }
+        );
+      } catch (error) {
+        console.error('Selection mode failed:', error);
+        showErrorMessage('Failed to enable selection mode: ' + error.message);
+      }
     });
   });
 
