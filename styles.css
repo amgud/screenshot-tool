@@ -208,6 +208,9 @@ img {
 /* New styles for the Gemini AI button and messages */
 .action-buttons {
   margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .action-btn {
@@ -221,6 +224,7 @@ img {
   transition: background-color 0.3s, opacity 0.3s;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   font-size: 14px;
+  flex-grow: 1;
 }
 
 .action-btn:hover:not(:disabled) {
@@ -264,11 +268,8 @@ img {
 
 /* API Settings for sidepanel */
 .api-settings-panel {
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  padding: 16px;
+  padding: 12px;
   margin-bottom: 20px;
-  border: 1px solid #e0e0e0;
 }
 
 /* Gemini response styles */
@@ -400,7 +401,6 @@ img {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 16px;
 }
 
 .title-area {
@@ -436,18 +436,20 @@ img {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease-out;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0;
 }
 
 .settings-menu.open {
   display: block;
   max-height: 650px;
   transition: max-height 0.3s ease-in;
+  padding: 16px;
 }
 
 /* Custom instructions panel styles */
 .custom-instructions-panel {
-  background-color: #f8f9fa;
-  border-radius: 8px;
   padding: 16px;
   margin-top: 16px;
   border: 1px solid #e0e0e0;

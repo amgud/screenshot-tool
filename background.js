@@ -14,9 +14,19 @@ chrome.storage.local.get(['geminiApiKey'], function (result) {
   }
 });
 
+let sidePanelOpen = false;
 // Open sidepanel when the extension icon is clicked
 chrome.action.onClicked.addListener((tab) => {
-  chrome.sidePanel.open({ tabId: tab.id });
+  // Check if sidepanel is open and toggle it accordingly
+  chrome.sidePanel.getOptions({ tabId: tab.id }, (options) => {
+    if (options?.enabled && sidePanelOpen) {
+      sidePanelOpen = false;
+      chrome.runtime.sendMessage({ action: 'closeSidePanel' });
+    } else {
+      sidePanelOpen = true;
+      chrome.sidePanel.open({ tabId: tab.id });
+    }
+  });
 });
 
 // Listen for messages from the sidepanel
