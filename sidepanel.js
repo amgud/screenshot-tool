@@ -1,3 +1,5 @@
+chrome.runtime.connect({ name: 'sidePanel' });
+
 document.addEventListener('DOMContentLoaded', function () {
   const takeScreenshotBtn = document.getElementById('takeScreenshotBtn');
   const selectAreaBtn = document.getElementById('selectAreaBtn');
@@ -376,6 +378,11 @@ document.addEventListener('DOMContentLoaded', function () {
         // Return true to indicate async response
         return true;
       });
+    }
+
+    if (request.action === 'closeSidePanel') {
+      window.close();
+      return true;
     }
   });
 

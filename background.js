@@ -1,21 +1,40 @@
 console.log('Background script running.');
 
+let sidePanelOpen = false;
+// Open sidepanel when the extension icon is clicked
+chrome.action.onClicked.addListener((tab) => {
+  chrome.sidePanel.getOptions({ tabId: tab.id }, (options) => {
+    if (options?.enabled && sidePanelOpen) {
+      sidePanelOpen = false;
+      chrome.runtime.sendMessage({ action: 'closeSidePanel' });
+    } else {
+      sidePanelOpen = true;
+      chrome.sidePanel.open({ tabId: tab.id });
+    }
+  });
+});
+
+// Listen for sidepanel disconnect event to update the state
+chrome.runtime.onConnect.addListener((port) => {
+  if (port.name === 'sidePanel') {
+    port.onDisconnect.addListener(() => {
+      sidePanelOpen = false;
+    });
+  }
+});
+
 // Default API key - users should replace this with their own
 const DEFAULT_API_KEY = '';
 let apiKey = DEFAULT_API_KEY;
 
 // Load the API key from storage when the extension starts
-chrome.storage.local.get(['geminiApiKey'], function (result) {
+chrome.storage.local.get(['geminiApiKey'], (result) => {
   if (result.geminiApiKey) {
     apiKey = result.geminiApiKey;
     console.log('API key loaded from storage');
   } else {
     console.log('No API key found in storage, using default');
   }
-});
-
-chrome.sidePanel.setPanelBehavior({
-  openPanelOnActionClick: true,
 });
 
 // Listen for messages from the sidepanel
