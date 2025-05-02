@@ -25,20 +25,12 @@
         <p class="preview-text">Screenshot preview will appear here</p>
       </div>
 
-      <!-- Response Container - Added as a separate block under the preview area -->
       <div
         class="response-container"
         id="responseContainer"
         style="display: block"
       >
         <!-- Response messages will be inserted here dynamically -->
-      </div>
-
-      <!-- History Panel Toggle Button -->
-      <div class="history-toggle">
-        <button id="historyToggleBtn" class="icon-btn" title="View History">
-          📋 View History
-        </button>
       </div>
 
       <!-- History Panel (Hidden by default) -->
@@ -56,9 +48,14 @@
         <button id="sendToGeminiBtn" class="action-btn" disabled>
           Send to Gemini AI
         </button>
-        <button id="settingsToggleBtn" class="icon-btn" title="Settings">
-          ⚙️
-        </button>
+        <div class="icon-buttons">
+          <button id="historyToggleBtn" class="icon-btn" title="View History">
+            📋
+          </button>
+          <button id="settingsToggleBtn" class="icon-btn" title="Settings">
+            ⚙️
+          </button>
+        </div>
       </div>
 
       <!-- Settings Menu (Hidden by default) -->
