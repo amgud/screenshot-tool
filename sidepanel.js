@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const previewArea = document.getElementById('previewArea');
   const selectionOverlay = document.getElementById('selectionOverlay');
   const sendToGeminiBtn = document.getElementById('sendToGeminiBtn');
+  const responseContainer = document.getElementById('responseContainer');
 
   // API Key elements
   const apiKeyInput = document.getElementById('apiKey');
@@ -157,6 +158,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Remove data URL prefix to get just the base64 data
     const base64Data = screenshotDataUrl.split(',')[1];
 
+    // Clear any previous response
+    responseContainer.innerHTML = '';
+    responseContainer.style.display = 'none';
+
     // Create request to Gemini API
     chrome.runtime.sendMessage(
       {
@@ -165,11 +170,8 @@ document.addEventListener('DOMContentLoaded', function () {
         instruction: customInstruction,
       },
       (response) => {
-        // Remove any existing response messages
-        const existingMessages = previewArea.querySelectorAll(
-          '.response-message, .success-message, .error-message'
-        );
-        existingMessages.forEach((msg) => msg.remove());
+        // Show the response container
+        responseContainer.style.display = 'block';
 
         if (response && response.success) {
           // Extract the text response from Gemini
@@ -185,10 +187,6 @@ document.addEventListener('DOMContentLoaded', function () {
           } catch (err) {
             console.error('Error parsing Gemini response:', err);
           }
-
-          // Create response container
-          const responseContainer = document.createElement('div');
-          responseContainer.className = 'response-container';
 
           // Add success message
           const successMsg = document.createElement('div');
@@ -215,8 +213,6 @@ document.addEventListener('DOMContentLoaded', function () {
               'Received a response from Gemini, but no text content was found.';
             responseContainer.appendChild(noResponseMsg);
           }
-
-          previewArea.appendChild(responseContainer);
         } else {
           // Show error message
           const errorMsg = document.createElement('div');
@@ -224,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
           errorMsg.textContent =
             response.error ||
             'Failed to send screenshot to Gemini AI. Please try again.';
-          previewArea.appendChild(errorMsg);
+          responseContainer.appendChild(errorMsg);
         }
 
         // Reset button state
@@ -315,5 +311,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Store the current screenshot and enable the send button
     currentScreenshot = dataUrl;
     sendToGeminiBtn.disabled = false;
+
+    // Clear any previous response when a new screenshot is displayed
+    responseContainer.innerHTML = '';
+    responseContainer.style.display = 'none';
   }
 });
