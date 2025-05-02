@@ -448,6 +448,14 @@ img {
   padding: 16px;
 }
 
+/* Section divider styles */
+.section-divider {
+  margin: 20px 0;
+  border: 0;
+  border-top: 1px solid #e0e0e0;
+  width: 100%;
+}
+
 /* Custom instructions panel styles */
 .custom-instructions-panel {
   padding: 16px;
