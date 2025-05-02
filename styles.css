@@ -350,7 +350,7 @@ img {
 
 .settings-menu.open {
   display: block;
-  max-height: 500px;
+  max-height: 650px;
   transition: max-height 0.3s ease-in;
 }
 
