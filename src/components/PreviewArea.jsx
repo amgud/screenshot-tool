@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PreviewArea = ({ screenshot }) => {
+export default function PreviewArea({ screenshot }) {
   return (
     <div className="preview-area" id="previewArea">
       {screenshot ? (
@@ -10,6 +10,4 @@ const PreviewArea = ({ screenshot }) => {
       )}
     </div>
   );
-};
-
-export default PreviewArea;
+}

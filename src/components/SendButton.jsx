@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ActionButtons = ({ onSendToGemini, disabled, isLoading }) => {
+export default function SendButton({ onSendToGemini, disabled, isLoading }) {
   return (
     <div className="action-buttons">
       <button
@@ -13,6 +13,4 @@ const ActionButtons = ({ onSendToGemini, disabled, isLoading }) => {
       </button>
     </div>
   );
-};
-
-export default ActionButtons;
+}
