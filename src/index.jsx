@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App';
+import SidePanel from './SidePanelApp';
 
 // Connect to the chrome runtime
 chrome.runtime.connect({ name: 'sidePanel' });
@@ -9,6 +9,6 @@ chrome.runtime.connect({ name: 'sidePanel' });
 const root = createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <SidePanel />
   </React.StrictMode>
 );
