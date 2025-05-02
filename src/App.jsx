@@ -305,6 +305,8 @@ const App = () => {
         onHistoryToggle={handleToggleHistory}
         onSettingsToggle={handleToggleSettings}
         viewingHistoryItem={viewingHistoryItem}
+        showHistoryPanel={showHistoryPanel}
+        showSettingsPanel={showSettingsPanel}
       />
 
       {/* Main content section that will be hidden when history or settings is open */}
