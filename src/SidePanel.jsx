@@ -5,7 +5,7 @@ import PreviewArea from './components/PreviewArea';
 import ResponseContainer from './components/ResponseContainer';
 import HistoryPanel from './components/HistoryPanel';
 import SettingsPanel from './components/SettingsPanel';
-import ActionButtons from './components/ActionButtons';
+import SendButton from './components/SendButton';
 import {
   loadScreenshotHistory,
   saveToHistory,
@@ -23,7 +23,7 @@ import {
   getDefaultInstruction,
 } from './services/settingsService';
 
-const App = () => {
+export default function SidePanel() {
   // State management
   const [currentScreenshot, setCurrentScreenshot] = useState(null);
   const [customInstruction, setCustomInstruction] = useState(
@@ -347,7 +347,7 @@ const App = () => {
 
       {/* Action Buttons */}
       {!showHistoryPanel && !showSettingsPanel && (
-        <ActionButtons
+        <SendButton
           onSendToGemini={handleSendToGemini}
           disabled={!currentScreenshot || isLoading}
           isLoading={isLoading}
@@ -355,6 +355,4 @@ const App = () => {
       )}
     </div>
   );
-};
-
-export default App;
+}
