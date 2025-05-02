@@ -1,5 +1,5 @@
 /**
- * Service for interacting with the Gemini API
+ * Service for handling Gemini API interactions
  */
 
 // Default API key - users should replace this with their own
@@ -65,21 +65,32 @@ export async function sendImageToGemini(base64ImageData, instruction, apiKey) {
 }
 
 /**
- * Extract text content from Gemini API response
- * @param {Object} response - The response from Gemini API
- * @returns {string} - The extracted text content
+ * Extract the text from a Gemini API response
+ * @param {Object} response - The Gemini API response object
+ * @returns {string|null} The extracted text or null if not found
  */
-export function extractTextFromGeminiResponse(response) {
+export const extractTextFromGeminiResponse = (response) => {
   try {
-    if (response?.candidates?.[0]?.content?.parts) {
-      // Extract text from the response
-      return response.candidates[0].content.parts
-        .filter((part) => part.text)
-        .map((part) => part.text)
-        .join('\n');
+    if (!response || !response.candidates || response.candidates.length === 0) {
+      return null;
     }
-  } catch (err) {
-    console.error('Error parsing Gemini response:', err);
+
+    const candidate = response.candidates[0];
+    if (
+      !candidate.content ||
+      !candidate.content.parts ||
+      candidate.content.parts.length === 0
+    ) {
+      return null;
+    }
+
+    const parts = candidate.content.parts;
+    const textParts = parts
+      .filter((part) => part.text)
+      .map((part) => part.text);
+    return textParts.join('\n\n');
+  } catch (error) {
+    console.error('Error extracting text from Gemini response:', error);
+    return null;
   }
-  return '';
-}
+};

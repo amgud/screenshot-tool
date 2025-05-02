@@ -1,68 +1,85 @@
 /**
- * Utility functions for image processing
+ * Utility functions for processing images and screenshots
  */
 
 /**
- * Process a captured area screenshot from the browser
- * @param {string} dataUrl - The full screenshot data URL
- * @param {Object} area - The selected area coordinates
- * @param {number} devicePixelRatio - The device pixel ratio for accurate cropping
- * @returns {Promise<string>} A data URL of the cropped image
+ * Extract base64 data from a data URL
+ * @param {string} dataUrl - The data URL
+ * @returns {string} Base64 data without the prefix
  */
-export async function processAreaScreenshot(dataUrl, area, devicePixelRatio) {
-  try {
-    // Convert base64 to blob
-    const response = await fetch(dataUrl);
-    const blob = await response.blob();
-    const imageBitmap = await createImageBitmap(blob);
+export const extractBase64FromDataUrl = (dataUrl) => {
+  if (!dataUrl) return null;
 
-    // Handle case where image might be cut off at the edges
-    if (area.x + area.width > imageBitmap.width) {
-      area.width = imageBitmap.width - area.x;
-    }
-    if (area.y + area.height > imageBitmap.height) {
-      area.height = imageBitmap.height - area.y;
-    }
+  // Data URLs start with "data:image/png;base64,"
+  const base64Prefix = 'base64,';
+  const index = dataUrl.indexOf(base64Prefix);
 
-    // Create a canvas to crop the image
-    const canvas = new OffscreenCanvas(area.width, area.height);
-    const ctx = canvas.getContext('2d');
-
-    // Draw only the selected portion of the image
-    ctx.drawImage(
-      imageBitmap,
-      area.x,
-      area.y,
-      area.width,
-      area.height, // Source area
-      0,
-      0,
-      area.width,
-      area.height // Destination area
-    );
-
-    // Get the cropped image data
-    const croppedBlob = await canvas.convertToBlob({ type: 'image/png' });
-
-    // Convert blob to base64
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        resolve(reader.result);
-      };
-      reader.readAsDataURL(croppedBlob);
-    });
-  } catch (error) {
-    console.error('Error processing screenshot:', error);
-    throw error;
+  if (index === -1) {
+    console.error('Invalid data URL format');
+    return null;
   }
-}
+
+  return dataUrl.substring(index + base64Prefix.length);
+};
 
 /**
- * Extract the base64 data from a data URL
- * @param {string} dataUrl - The data URL containing the base64 data
- * @returns {string} The base64 data without the data URL prefix
+ * Process an area screenshot by cropping to the selected area
+ * @param {string} fullScreenDataUrl - The full screenshot data URL
+ * @param {Object} area - The area to crop (x, y, width, height)
+ * @param {number} devicePixelRatio - The device pixel ratio for scaling
+ * @returns {Promise<string>} A data URL for the cropped image
  */
-export function extractBase64FromDataUrl(dataUrl) {
-  return dataUrl.split(',')[1];
-}
+export const processAreaScreenshot = (
+  fullScreenDataUrl,
+  area,
+  devicePixelRatio
+) => {
+  return new Promise((resolve, reject) => {
+    try {
+      // Create an image from the data URL
+      const img = new Image();
+      img.onload = () => {
+        // Scale the selection area by the device pixel ratio
+        const scaledArea = {
+          x: area.x * devicePixelRatio,
+          y: area.y * devicePixelRatio,
+          width: area.width * devicePixelRatio,
+          height: area.height * devicePixelRatio,
+        };
+
+        // Create a canvas to draw the cropped image
+        const canvas = document.createElement('canvas');
+        canvas.width = scaledArea.width;
+        canvas.height = scaledArea.height;
+
+        const ctx = canvas.getContext('2d');
+
+        // Draw the cropped portion of the image
+        ctx.drawImage(
+          img,
+          scaledArea.x,
+          scaledArea.y,
+          scaledArea.width,
+          scaledArea.height,
+          0,
+          0,
+          scaledArea.width,
+          scaledArea.height
+        );
+
+        // Convert canvas to data URL
+        const croppedDataUrl = canvas.toDataURL('image/png');
+        resolve(croppedDataUrl);
+      };
+
+      img.onerror = () => {
+        reject(new Error('Failed to load screenshot for processing'));
+      };
+
+      img.src = fullScreenDataUrl;
+    } catch (error) {
+      console.error('Error processing area screenshot:', error);
+      reject(error);
+    }
+  });
+};
