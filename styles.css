@@ -236,7 +236,7 @@ img {
 .success-message,
 .error-message,
 .warning-message {
-  margin-top: 10px;
+  margin-bottom: 20px;
   padding: 10px;
   border-radius: 4px;
   text-align: center;
@@ -274,7 +274,6 @@ img {
 /* Gemini response styles */
 .response-container {
   width: 100%;
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
