@@ -232,14 +232,17 @@ img {
   cursor: not-allowed;
 }
 
+/* Common styles for message boxes */
 .success-message,
-.error-message {
+.error-message,
+.warning-message {
   margin-top: 10px;
   padding: 10px;
   border-radius: 4px;
   width: 100%;
   text-align: center;
   font-weight: 500;
+  box-sizing: border-box;
 }
 
 .success-message {
@@ -252,6 +255,12 @@ img {
   background-color: #fdeded;
   color: #ea4335;
   border: 1px solid #ea4335;
+}
+
+.warning-message {
+  background-color: #fff8e1;
+  color: #f9a825;
+  border: 1px solid #ffe082;
 }
 
 /* API Settings for sidepanel */
@@ -295,40 +304,6 @@ img {
   line-height: 1.5;
   color: #202124;
   margin: 0;
-}
-
-.warning-message {
-  background-color: #fff8e1;
-  color: #f9a825;
-  border: 1px solid #ffe082;
-  border-radius: 4px;
-  padding: 10px;
-  width: 100%;
-  text-align: center;
-  font-weight: 500;
-  box-sizing: border-box;
-}
-
-.success-message,
-.error-message {
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: 4px;
-  width: 100%;
-  text-align: center;
-  font-weight: 500;
-}
-
-.success-message {
-  background-color: #e6f7e6;
-  color: #34a853;
-  border: 1px solid #34a853;
-}
-
-.error-message {
-  background-color: #fdeded;
-  color: #ea4335;
-  border: 1px solid #ea4335;
 }
 
 /* Header styles with settings icon */
