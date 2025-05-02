@@ -1,78 +1,68 @@
 /**
- * Service for managing application settings
+ * Settings service for loading and saving extension settings
  */
 
-// Default instruction text
+// Default instruction for Gemini
 const DEFAULT_INSTRUCTION =
   "What's in this image? Please describe it in detail.";
 
 /**
- * Load API key from Chrome storage
+ * Loads the API key from chrome storage
  * @returns {Promise<string>} The API key or empty string if not found
  */
-export function loadApiKey() {
+export const loadApiKey = async () => {
   return new Promise((resolve) => {
-    chrome.storage.local.get(['geminiApiKey'], (result) => {
-      if (result.geminiApiKey) {
-        resolve(result.geminiApiKey);
-      } else {
-        resolve('');
-      }
+    chrome.storage.local.get(['apiKey'], (result) => {
+      resolve(result.apiKey || '');
     });
   });
-}
+};
 
 /**
- * Save API key to Chrome storage
+ * Saves the API key to chrome storage
  * @param {string} apiKey - The API key to save
- * @returns {Promise<boolean>} True if successful
+ * @returns {Promise<boolean>} Whether the save was successful
  */
-export function saveApiKey(apiKey) {
+export const saveApiKey = async (apiKey) => {
   return new Promise((resolve) => {
-    chrome.storage.local.set({ geminiApiKey: apiKey }, () => {
-      console.log('API key saved to storage');
+    chrome.storage.local.set({ apiKey }, () => {
       resolve(true);
     });
   });
-}
+};
 
 /**
- * Load custom instruction from Chrome storage
+ * Loads the custom instruction from chrome storage
  * @returns {Promise<string>} The custom instruction or default if not found
  */
-export function loadCustomInstruction() {
+export const loadCustomInstruction = async () => {
   return new Promise((resolve) => {
     chrome.storage.local.get(['customInstruction'], (result) => {
-      if (result.customInstruction) {
-        resolve(result.customInstruction);
-      } else {
-        resolve(DEFAULT_INSTRUCTION);
-      }
+      resolve(result.customInstruction || DEFAULT_INSTRUCTION);
     });
   });
-}
+};
 
 /**
- * Save custom instruction to Chrome storage
+ * Saves the custom instruction to chrome storage
  * @param {string} instruction - The instruction to save
- * @returns {Promise<boolean>} True if successful
+ * @returns {Promise<boolean>} Whether the save was successful
  */
-export function saveCustomInstruction(instruction) {
-  // Use default instruction if empty
-  const finalInstruction = instruction.trim() || DEFAULT_INSTRUCTION;
-
+export const saveCustomInstruction = async (instruction) => {
   return new Promise((resolve) => {
-    chrome.storage.local.set({ customInstruction: finalInstruction }, () => {
-      console.log('Custom instruction saved to storage');
-      resolve(true);
-    });
+    chrome.storage.local.set(
+      { customInstruction: instruction || DEFAULT_INSTRUCTION },
+      () => {
+        resolve(true);
+      }
+    );
   });
-}
+};
 
 /**
- * Get the default instruction text
- * @returns {string} The default instruction text
+ * Returns the default Gemini instruction
+ * @returns {string} The default instruction
  */
-export function getDefaultInstruction() {
+export const getDefaultInstruction = () => {
   return DEFAULT_INSTRUCTION;
-}
+};

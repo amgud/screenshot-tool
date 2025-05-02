@@ -2,141 +2,146 @@
  * Service for managing screenshot history
  */
 
-// Maximum number of history items to store
-const MAX_HISTORY_ITEMS = 20;
+const HISTORY_STORAGE_KEY = 'screenshotHistory';
+const MAX_HISTORY_ITEMS = 50; // Maximum number of history items to store
 
 /**
- * Load screenshot history from Chrome storage
- * @returns {Promise<Array>} Array of history items
+ * Generate a unique ID for history items
+ * @returns {string} A unique ID
  */
-export function loadScreenshotHistory() {
-  return new Promise((resolve) => {
-    chrome.storage.local.get(['screenshotHistory'], (result) => {
-      if (result.screenshotHistory && Array.isArray(result.screenshotHistory)) {
-        resolve(result.screenshotHistory);
-      } else {
-        resolve([]);
-      }
-    });
-  });
-}
-
-/**
- * Save a screenshot and its response to history
- * @param {string} screenshotUrl - The data URL of the screenshot
- * @param {string} response - The text response from Gemini
- * @param {Array} currentHistory - The current history array (optional)
- * @returns {Promise<Array>} Updated history array
- */
-export async function saveToHistory(
-  screenshotUrl,
-  response,
-  currentHistory = null
-) {
-  // Get current history if not provided
-  const history = currentHistory || (await loadScreenshotHistory());
-
-  // Generate a thumbnail from the screenshot
-  const thumbnailUrl = await createThumbnail(screenshotUrl);
-
-  // Create a new history item
-  const newItem = {
-    id: Date.now().toString(), // Use timestamp as unique ID
-    timestamp: Date.now(),
-    screenshotUrl: screenshotUrl,
-    thumbnailUrl: thumbnailUrl,
-    response: response,
-  };
-
-  // Add to history array (at the beginning)
-  history.unshift(newItem);
-
-  // Limit the number of items
-  const updatedHistory =
-    history.length > MAX_HISTORY_ITEMS
-      ? history.slice(0, MAX_HISTORY_ITEMS)
-      : history;
-
-  // Save to storage
-  await saveHistoryToStorage(updatedHistory);
-
-  return updatedHistory;
-}
-
-/**
- * Save history array to Chrome storage
- * @param {Array} history - The history array to save
- * @returns {Promise<void>}
- */
-export function saveHistoryToStorage(history) {
-  return new Promise((resolve) => {
-    chrome.storage.local.set({ screenshotHistory: history }, () => {
-      console.log('Screenshot history saved to storage');
-      resolve();
-    });
-  });
-}
-
-/**
- * Get a specific history item by ID
- * @param {string} itemId - The ID of the history item to get
- * @param {Array} history - The history array
- * @returns {Object|null} The history item, or null if not found
- */
-export function getHistoryItem(itemId, history) {
-  return history.find((item) => item.id === itemId) || null;
-}
+const generateId = () => {
+  return Date.now().toString(36) + Math.random().toString(36).substring(2);
+};
 
 /**
  * Create a thumbnail from a screenshot
- * @param {string} dataUrl - The data URL of the screenshot
+ * @param {string} screenshotUrl - The data URL of the screenshot
  * @returns {Promise<string>} The data URL of the thumbnail
  */
-function createThumbnail(dataUrl) {
+const createThumbnail = (screenshotUrl) => {
   return new Promise((resolve, reject) => {
     const img = new Image();
-
-    img.onload = function () {
-      // Create a canvas for the thumbnail
+    img.onload = () => {
+      // Create a thumbnail that's 300px wide
+      const MAX_WIDTH = 300;
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
 
-      // Set thumbnail dimensions
-      const maxWidth = 120;
-      const maxHeight = 80;
+      // Calculate the thumbnail size, maintaining aspect ratio
+      const aspectRatio = img.width / img.height;
+      const width = Math.min(MAX_WIDTH, img.width);
+      const height = width / aspectRatio;
 
-      // Calculate thumbnail dimensions while maintaining aspect ratio
-      let width = img.width;
-      let height = img.height;
-
-      if (width > height) {
-        if (width > maxWidth) {
-          height = height * (maxWidth / width);
-          width = maxWidth;
-        }
-      } else {
-        if (height > maxHeight) {
-          width = width * (maxHeight / height);
-          height = maxHeight;
-        }
-      }
-
-      // Set canvas dimensions
+      // Set canvas dimensions and draw the image
       canvas.width = width;
       canvas.height = height;
-
-      // Draw the image on the canvas
       ctx.drawImage(img, 0, 0, width, height);
 
-      // Get the data URL
-      const thumbnailUrl = canvas.toDataURL('image/jpeg', 0.7);
-      resolve(thumbnailUrl);
+      // Convert canvas to data URL
+      resolve(canvas.toDataURL('image/jpeg', 0.7)); // Use JPEG for smaller size
     };
 
-    img.onerror = function () {
-      reject(new Error('Failed to load image for thumbnail creation'));
+    img.onerror = () => {
+      reject(new Error('Failed to create thumbnail'));
     };
 
-    img.src = dataUrl;
+    img.src = screenshotUrl;
   });
-}
+};
+
+/**
+ * Load screenshot history from storage
+ * @returns {Promise<Array>} Array of history items
+ */
+export const loadScreenshotHistory = async () => {
+  return new Promise((resolve) => {
+    chrome.storage.local.get([HISTORY_STORAGE_KEY], (result) => {
+      const history = result[HISTORY_STORAGE_KEY] || [];
+      resolve(history);
+    });
+  });
+};
+
+/**
+ * Save a new item to the screenshot history
+ * @param {string} screenshotUrl - The data URL of the screenshot
+ * @param {string} response - The response from Gemini
+ * @param {Array} currentHistory - The current history array
+ * @returns {Promise<Array>} Updated history array
+ */
+export const saveToHistory = async (
+  screenshotUrl,
+  response,
+  currentHistory
+) => {
+  try {
+    // Create a thumbnail
+    const thumbnailUrl = await createThumbnail(screenshotUrl);
+
+    // Create a new history item
+    const newItem = {
+      id: generateId(),
+      timestamp: Date.now(),
+      screenshotUrl,
+      thumbnailUrl,
+      response,
+    };
+
+    // Get existing history if not provided
+    let history = currentHistory;
+    if (!history || !Array.isArray(history)) {
+      history = await loadScreenshotHistory();
+    }
+
+    // Add new item to the beginning of the array
+    const updatedHistory = [newItem, ...history];
+
+    // Limit the number of items
+    const limitedHistory = updatedHistory.slice(0, MAX_HISTORY_ITEMS);
+
+    // Save to storage
+    await chrome.storage.local.set({ [HISTORY_STORAGE_KEY]: limitedHistory });
+
+    return limitedHistory;
+  } catch (error) {
+    console.error('Error saving to history:', error);
+    return currentHistory || [];
+  }
+};
+
+/**
+ * Delete an item from history
+ * @param {string} itemId - The ID of the item to delete
+ * @returns {Promise<Array>} Updated history array
+ */
+export const deleteHistoryItem = async (itemId) => {
+  try {
+    // Load current history
+    const history = await loadScreenshotHistory();
+
+    // Filter out the item to delete
+    const updatedHistory = history.filter((item) => item.id !== itemId);
+
+    // Save updated history
+    await chrome.storage.local.set({ [HISTORY_STORAGE_KEY]: updatedHistory });
+
+    return updatedHistory;
+  } catch (error) {
+    console.error('Error deleting history item:', error);
+    return null;
+  }
+};
+
+/**
+ * Get a specific history item by ID
+ * @param {string} itemId - The ID of the item to get
+ * @param {Array} history - The history array to search in
+ * @returns {Object|null} The history item or null if not found
+ */
+export const getHistoryItem = (itemId, history) => {
+  if (!history || !Array.isArray(history)) {
+    return null;
+  }
+
+  return history.find((item) => item.id === itemId) || null;
+};
