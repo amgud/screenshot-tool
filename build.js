@@ -1,8 +1,9 @@
 import fs from 'fs';
 
 // Copies static files to the dist directory
-// Create dist directory if it doesn't exist
-if (!fs.existsSync('./dist')) {
+// clean up the dist directory if it exists
+if (fs.existsSync('./dist')) {
+  fs.rmSync('./dist', { recursive: true, force: true });
   fs.mkdirSync('./dist');
 }
 

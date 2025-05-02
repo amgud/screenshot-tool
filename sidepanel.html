@@ -12,25 +12,36 @@
           <h1>Screenshot Tool</h1>
           <p>Take screenshots of your browser and view them here</p>
         </div>
+        <div class="header-icon-buttons">
+          <button id="historyToggleBtn" class="icon-btn" title="View History">
+            📋
+          </button>
+          <button id="settingsToggleBtn" class="icon-btn" title="Settings">
+            ⚙️
+          </button>
+        </div>
       </div>
 
-      <div class="button-group">
-        <button id="takeScreenshotBtn" class="screenshot-btn">
-          Full Page Screenshot
-        </button>
-        <button id="selectAreaBtn" class="screenshot-btn">Select Area</button>
-      </div>
+      <!-- Main content section that will be hidden when history is open -->
+      <div class="main-content" id="mainContent">
+        <div class="button-group">
+          <button id="takeScreenshotBtn" class="screenshot-btn">
+            Full Page Screenshot
+          </button>
+          <button id="selectAreaBtn" class="screenshot-btn">Select Area</button>
+        </div>
 
-      <div class="preview-area" id="previewArea">
-        <p class="preview-text">Screenshot preview will appear here</p>
-      </div>
+        <div class="preview-area" id="previewArea">
+          <p class="preview-text">Screenshot preview will appear here</p>
+        </div>
 
-      <div
-        class="response-container"
-        id="responseContainer"
-        style="display: block"
-      >
-        <!-- Response messages will be inserted here dynamically -->
+        <div
+          class="response-container"
+          id="responseContainer"
+          style="display: block"
+        >
+          <!-- Response messages will be inserted here dynamically -->
+        </div>
       </div>
 
       <!-- History Panel (Hidden by default) -->
@@ -48,14 +59,6 @@
         <button id="sendToGeminiBtn" class="action-btn" disabled>
           Send to Gemini AI
         </button>
-        <div class="icon-buttons">
-          <button id="historyToggleBtn" class="icon-btn" title="View History">
-            📋
-          </button>
-          <button id="settingsToggleBtn" class="icon-btn" title="Settings">
-            ⚙️
-          </button>
-        </div>
       </div>
 
       <!-- Settings Menu (Hidden by default) -->
