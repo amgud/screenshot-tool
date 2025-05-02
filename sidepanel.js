@@ -377,11 +377,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return true;
       });
     }
-
-    if (request.action === 'closeSidePanel') {
-      window.close();
-      return true;
-    }
   });
 
   function displayScreenshot(dataUrl) {
