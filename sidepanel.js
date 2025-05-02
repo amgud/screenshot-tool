@@ -10,6 +10,12 @@ document.addEventListener('DOMContentLoaded', function () {
   const saveApiKeyBtn = document.getElementById('saveApiKey');
   const toggleApiKeyBtn = document.getElementById('toggleApiKeyBtn');
 
+  // Custom instruction elements
+  const customInstructionInput = document.getElementById('customInstruction');
+  const saveCustomInstructionBtn = document.getElementById(
+    'saveCustomInstruction'
+  );
+
   // Settings menu elements
   const settingsToggleBtn = document.getElementById('settingsToggleBtn');
   const settingsMenu = document.getElementById('settingsMenu');
@@ -18,6 +24,10 @@ document.addEventListener('DOMContentLoaded', function () {
   let startX, startY, endX, endY;
   let selectionBox = null;
   let currentScreenshot = null;
+  // Default instruction text
+  const DEFAULT_INSTRUCTION =
+    "What's in this image? Please describe it in detail.";
+  let customInstruction = DEFAULT_INSTRUCTION;
 
   // API Key toggle visibility
   toggleApiKeyBtn.addEventListener('click', () => {
@@ -47,10 +57,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Load saved API key when sidepanel opens
-  chrome.storage.local.get(['geminiApiKey'], (result) => {
+  // Load saved API key and custom instruction when sidepanel opens
+  chrome.storage.local.get(['geminiApiKey', 'customInstruction'], (result) => {
     if (result.geminiApiKey) {
       apiKeyInput.value = result.geminiApiKey;
+    }
+
+    if (result.customInstruction) {
+      customInstructionInput.value = result.customInstruction;
+      customInstruction = result.customInstruction;
+    } else {
+      customInstructionInput.value = DEFAULT_INSTRUCTION;
     }
   });
 
@@ -72,6 +89,33 @@ document.addEventListener('DOMContentLoaded', function () {
             saveApiKeyBtn.textContent = 'Save';
           }, 2000);
         }
+      }
+    );
+  });
+
+  // Save custom instruction button
+  saveCustomInstructionBtn.addEventListener('click', () => {
+    const instruction = customInstructionInput.value.trim();
+
+    // Use default instruction if empty
+    if (!instruction) {
+      customInstructionInput.value = DEFAULT_INSTRUCTION;
+      customInstruction = DEFAULT_INSTRUCTION;
+    } else {
+      customInstruction = instruction;
+    }
+
+    // Save to Chrome storage
+    chrome.storage.local.set(
+      { customInstruction: customInstruction },
+      function () {
+        console.log('Custom instruction saved to storage');
+
+        // Visual feedback that instruction was saved
+        saveCustomInstructionBtn.textContent = 'Saved!';
+        setTimeout(() => {
+          saveCustomInstructionBtn.textContent = 'Save';
+        }, 2000);
       }
     );
   });
@@ -118,6 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
       {
         action: 'sendToGemini',
         imageData: base64Data,
+        instruction: customInstruction,
       },
       (response) => {
         // Remove any existing response messages
