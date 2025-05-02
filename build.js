@@ -1,0 +1,32 @@
+import fs from 'fs';
+
+// Copies static files to the dist directory
+// Create dist directory if it doesn't exist
+if (!fs.existsSync('./dist')) {
+  fs.mkdirSync('./dist');
+}
+
+// Create icons directory if it doesn't exist
+if (!fs.existsSync('./dist/icons')) {
+  fs.mkdirSync('./dist/icons');
+}
+
+// Copy static files
+const staticFiles = [
+  { src: './manifest.json', dest: './dist/manifest.json' },
+  { src: './icons/icon-16.png', dest: './dist/icons/icon-16.png' },
+  { src: './icons/icon-48.png', dest: './dist/icons/icon-48.png' },
+  { src: './icons/icon-128.png', dest: './dist/icons/icon-128.png' },
+];
+
+// Copy all files
+staticFiles.forEach((file) => {
+  try {
+    fs.copyFileSync(file.src, file.dest);
+    console.log(`Copied ${file.src} to ${file.dest}`);
+  } catch (err) {
+    console.error(`Error copying ${file.src}:`, err);
+  }
+});
+
+console.log('Static files copied successfully');
