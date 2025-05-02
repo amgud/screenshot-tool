@@ -34,6 +34,24 @@
         <!-- Response messages will be inserted here dynamically -->
       </div>
 
+      <!-- History Panel Toggle Button -->
+      <div class="history-toggle">
+        <button id="historyToggleBtn" class="icon-btn" title="View History">
+          📋 View History
+        </button>
+      </div>
+
+      <!-- History Panel (Hidden by default) -->
+      <div id="historyPanel" class="history-panel">
+        <h2>Screenshot History</h2>
+        <div class="history-list" id="historyList">
+          <!-- History items will be populated here -->
+          <p class="empty-history-message">
+            No history items yet. Take a screenshot to get started!
+          </p>
+        </div>
+      </div>
+
       <div class="action-buttons">
         <button id="sendToGeminiBtn" class="action-btn" disabled>
           Send to Gemini AI

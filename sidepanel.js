@@ -23,6 +23,11 @@ document.addEventListener('DOMContentLoaded', function () {
   const settingsToggleBtn = document.getElementById('settingsToggleBtn');
   const settingsMenu = document.getElementById('settingsMenu');
 
+  // History panel elements
+  const historyToggleBtn = document.getElementById('historyToggleBtn');
+  const historyPanel = document.getElementById('historyPanel');
+  const historyList = document.getElementById('historyList');
+
   let isSelecting = false;
   let startX, startY, endX, endY;
   let selectionBox = null;
@@ -31,6 +36,13 @@ document.addEventListener('DOMContentLoaded', function () {
   const DEFAULT_INSTRUCTION =
     "What's in this image? Please describe it in detail.";
   let customInstruction = DEFAULT_INSTRUCTION;
+
+  // Maximum number of history items to store
+  const MAX_HISTORY_ITEMS = 20;
+  // Array to store history items
+  let screenshotHistory = [];
+  // Current active history item (if viewing from history)
+  let activeHistoryItemId = null;
 
   /**
    * Simple markdown parser function
@@ -227,6 +239,198 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // History panel toggle
+  historyToggleBtn.addEventListener('click', () => {
+    historyPanel.classList.toggle('open');
+
+    // Load history if panel is being opened
+    if (historyPanel.classList.contains('open')) {
+      loadScreenshotHistory();
+    }
+  });
+
+  // Load screenshot history from storage
+  function loadScreenshotHistory() {
+    chrome.storage.local.get(['screenshotHistory'], (result) => {
+      if (result.screenshotHistory && Array.isArray(result.screenshotHistory)) {
+        screenshotHistory = result.screenshotHistory;
+        renderHistoryItems();
+      } else {
+        screenshotHistory = [];
+        // Show empty history message
+        historyList.innerHTML =
+          '<p class="empty-history-message">No history items yet. Take a screenshot to get started!</p>';
+      }
+    });
+  }
+
+  // Render history items in the panel
+  function renderHistoryItems() {
+    // Clear the history list
+    historyList.innerHTML = '';
+
+    // Show message if history is empty
+    if (screenshotHistory.length === 0) {
+      historyList.innerHTML =
+        '<p class="empty-history-message">No history items yet. Take a screenshot to get started!</p>';
+      return;
+    }
+
+    // Sort history items by timestamp (newest first)
+    const sortedHistory = [...screenshotHistory].sort(
+      (a, b) => b.timestamp - a.timestamp
+    );
+
+    // Create DOM elements for each history item
+    sortedHistory.forEach((item) => {
+      const historyItem = document.createElement('div');
+      historyItem.className = 'history-item';
+      historyItem.dataset.id = item.id;
+
+      // Format date
+      const date = new Date(item.timestamp);
+      const formattedDate = date.toLocaleString();
+
+      // Create response preview (truncate if too long)
+      let responsePreview = item.response || 'No response available';
+      if (responsePreview.length > 150) {
+        responsePreview = responsePreview.substring(0, 150) + '...';
+      }
+
+      // Build item HTML
+      historyItem.innerHTML = `
+        <div class="history-item-date">${formattedDate}</div>
+        <div class="history-item-content">
+          <img src="${item.thumbnailUrl}" class="history-thumbnail" alt="Screenshot thumbnail">
+          <div class="history-response-preview">${responsePreview}</div>
+        </div>
+      `;
+
+      // Add click event to load this item
+      historyItem.addEventListener('click', () => {
+        loadHistoryItem(item.id);
+      });
+
+      historyList.appendChild(historyItem);
+    });
+  }
+
+  // Load a specific history item
+  function loadHistoryItem(itemId) {
+    const item = screenshotHistory.find((i) => i.id === itemId);
+    if (!item) return;
+
+    // Set as active item
+    activeHistoryItemId = itemId;
+
+    // Display the screenshot
+    displayScreenshot(item.screenshotUrl);
+
+    // Display the response if available
+    if (item.response) {
+      responseContainer.innerHTML = '';
+      responseContainer.style.display = 'block';
+
+      const responseContent = document.createElement('div');
+      responseContent.className = 'response-message';
+      responseContent.innerHTML = '<h3>Gemini Response:</h3>';
+
+      const responseText = document.createElement('div');
+      responseText.className = 'response-text markdown-content';
+      responseText.innerHTML = parseMarkdown(item.response);
+
+      responseContent.appendChild(responseText);
+      responseContainer.appendChild(responseContent);
+
+      // Add a "from history" indicator
+      const historyIndicator = document.createElement('div');
+      historyIndicator.className = 'success-message';
+      historyIndicator.textContent = 'Viewing item from history';
+      responseContainer.prepend(historyIndicator);
+    }
+
+    // Close the history panel
+    historyPanel.classList.remove('open');
+  }
+
+  // Save an item to history
+  function saveToHistory(screenshotUrl, response) {
+    // Generate a thumbnail from the screenshot
+    createThumbnail(screenshotUrl).then((thumbnailUrl) => {
+      // Create a new history item
+      const newItem = {
+        id: Date.now().toString(), // Use timestamp as unique ID
+        timestamp: Date.now(),
+        screenshotUrl: screenshotUrl,
+        thumbnailUrl: thumbnailUrl,
+        response: response,
+      };
+
+      // Add to history array
+      screenshotHistory.unshift(newItem);
+
+      // Limit the number of items
+      if (screenshotHistory.length > MAX_HISTORY_ITEMS) {
+        screenshotHistory = screenshotHistory.slice(0, MAX_HISTORY_ITEMS);
+      }
+
+      // Save to storage
+      chrome.storage.local.set({ screenshotHistory: screenshotHistory }, () => {
+        console.log('Screenshot history saved to storage');
+      });
+    });
+  }
+
+  // Create a thumbnail from a screenshot
+  function createThumbnail(dataUrl) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+
+      img.onload = function () {
+        // Create a canvas for the thumbnail
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set thumbnail dimensions
+        const maxWidth = 120;
+        const maxHeight = 80;
+
+        // Calculate thumbnail dimensions while maintaining aspect ratio
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = height * (maxWidth / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = width * (maxHeight / height);
+            height = maxHeight;
+          }
+        }
+
+        // Set canvas dimensions
+        canvas.width = width;
+        canvas.height = height;
+
+        // Draw the image on the canvas
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Get the data URL
+        const thumbnailUrl = canvas.toDataURL('image/jpeg', 0.7);
+        resolve(thumbnailUrl);
+      };
+
+      img.onerror = function () {
+        reject(new Error('Failed to load image for thumbnail creation'));
+      };
+
+      img.src = dataUrl;
+    });
+  }
+
   // Function to send screenshot to Gemini
   function sendScreenshotToGemini(screenshotDataUrl) {
     // Show loading state
@@ -292,6 +496,9 @@ document.addEventListener('DOMContentLoaded', function () {
               'Received a response from Gemini, but no text content was found.';
             responseContainer.appendChild(noResponseMsg);
           }
+
+          // Save to history
+          saveToHistory(screenshotDataUrl, geminiText);
         } else {
           // Show error message
           const errorMsg = document.createElement('div');
