@@ -113,21 +113,6 @@ h2 {
   text-decoration: underline;
 }
 
-.open-panel-btn {
-  background-color: #4285f4;
-  color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-top: 5px;
-}
-
-.open-panel-btn:hover {
-  background-color: #3367d6;
-}
-
 .container {
   max-width: 800px;
   margin: 0 auto;
@@ -458,19 +443,6 @@ img {
   border: 0;
   border-top: 1px solid #e0e0e0;
   width: 100%;
-}
-
-/* Custom instructions panel styles */
-.custom-instructions-panel {
-  padding: 16px;
-  margin-top: 16px;
-  border: 1px solid #e0e0e0;
-}
-
-.custom-instructions-panel h2 {
-  color: #1a73e8;
-  margin-top: 0;
-  font-size: 18px;
 }
 
 textarea#customInstruction {
