@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background rectangle representing a browser window -->
+  <rect x="12" y="12" width="104" height="80" rx="6" fill="#f0f0f0" stroke="#333" stroke-width="3"/>
+  
+  <!-- Camera lens/shutter representing screenshot functionality -->
+  <circle cx="64" cy="55" r="28" fill="#4285F4" opacity="0.9"/>
+  <circle cx="64" cy="55" r="22" fill="#ffffff" opacity="0.3"/>
+  <circle cx="64" cy="55" r="16" fill="#4285F4" opacity="0.8"/>
+  <circle cx="64" cy="55" r="8" fill="#ffffff" opacity="0.5"/>
+  
+  <!-- Flash effect to represent capturing a screenshot -->
+  <path d="M90 40L102 30M45 75L33 85M85 75L95 85M42 35L32 25" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Brain symbol representing AI analysis (Gemini) -->
+  <path d="M64 92C76 92 85 99 85 107C85 115 76 119 64 119C52 119 43 115 43 107C43 99 52 92 64 92Z" fill="#EA4335"/>
+  <path d="M58 107C58 107 61 112 64 112C67 112 70 107 70 107M53 100C53 100 56 103 64 103C72 103 75 100 75 100" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- Small sparkles around brain to indicate AI processing -->
+  <circle cx="45" cy="100" r="2" fill="#FBBC05"/>
+  <circle cx="83" cy="100" r="2" fill="#34A853"/>
+  <circle cx="64" cy="85" r="2" fill="#4285F4"/>
+</svg>
