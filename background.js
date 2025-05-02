@@ -22,11 +22,14 @@ chrome.action.onClicked.addListener((tab) => {
 // Listen for messages from the sidepanel
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'sendToGemini') {
-    // Get the image data from the request
+    // Get the image data and custom instruction from the request
     const imageData = request.imageData;
+    const customInstruction =
+      request.instruction ||
+      "What's in this image? Please describe it in detail.";
 
     // Call the Gemini API
-    sendImageToGemini(imageData)
+    sendImageToGemini(imageData, customInstruction)
       .then((result) => {
         sendResponse({ success: true, result });
       })
@@ -52,7 +55,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 // Function to send an image to Gemini AI
-async function sendImageToGemini(base64ImageData) {
+async function sendImageToGemini(base64ImageData, instruction) {
   const API_URL =
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
@@ -69,7 +72,7 @@ async function sendImageToGemini(base64ImageData) {
       {
         parts: [
           {
-            text: "What's in this image? Please describe it in detail.",
+            text: instruction,
           },
           {
             inline_data: {

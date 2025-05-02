@@ -379,3 +379,28 @@ img {
   max-height: 500px;
   transition: max-height 0.3s ease-in;
 }
+
+/* Custom instructions panel styles */
+.custom-instructions-panel {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+  border: 1px solid #e0e0e0;
+}
+
+.custom-instructions-panel h2 {
+  color: #1a73e8;
+  margin-top: 0;
+  font-size: 18px;
+}
+
+textarea#customInstruction {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+}

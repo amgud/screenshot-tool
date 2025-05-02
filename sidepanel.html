@@ -21,7 +21,7 @@
 
       <!-- Settings Menu (Hidden by default) -->
       <div id="settingsMenu" class="settings-menu">
-        <!-- API Key Settings Section (moved here) -->
+        <!-- API Key Settings Section -->
         <div class="api-settings-panel">
           <h2>API Settings</h2>
           <div class="input-group">
@@ -50,6 +50,24 @@
             <a href="https://aistudio.google.com/app/apikey" target="_blank"
               >Google AI Studio</a
             >
+          </p>
+        </div>
+
+        <!-- Custom Instructions Section -->
+        <div class="custom-instructions-panel">
+          <h2>Custom Instructions</h2>
+          <div class="input-group">
+            <label for="customInstruction">Instructions for Gemini:</label>
+            <textarea
+              id="customInstruction"
+              placeholder="What would you like Gemini to do with the screenshot? (e.g., 'Describe what's in this image' or 'Answer the question in the screenshot')"
+              rows="4"
+            ></textarea>
+            <button id="saveCustomInstruction" class="save-btn">Save</button>
+          </div>
+          <p class="note">
+            Customize how Gemini analyzes your screenshots. Default: General
+            description of the image.
           </p>
         </div>
       </div>
