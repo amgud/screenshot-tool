@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import {
   loadApiKey,
   saveApiKey,
@@ -128,7 +129,7 @@ export default function SettingsPanel({ onCustomInstructionChange }) {
               title={apiKeyVisible ? 'Hide API Key' : 'Show API Key'}
               onClick={handleToggleApiKey}
             >
-              {apiKeyVisible ? '🙈' : '👁️'}
+              {apiKeyVisible ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
           <button

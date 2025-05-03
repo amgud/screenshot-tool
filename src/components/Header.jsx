@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaTimes, FaHistory, FaCog } from 'react-icons/fa';
 
 export default function Header({
   onHistoryToggle,
@@ -19,14 +20,14 @@ export default function Header({
           title={viewingHistoryItem ? 'Clear History View' : 'View History'}
           onClick={onHistoryToggle}
         >
-          {viewingHistoryItem || showHistoryPanel ? '❌' : '📋'}
+          {viewingHistoryItem || showHistoryPanel ? <FaTimes /> : <FaHistory />}
         </button>
         <button
           className="icon-btn"
           title="Settings"
           onClick={onSettingsToggle}
         >
-          {showSettingsPanel ? '❌' : '⚙️'}
+          {showSettingsPanel ? <FaTimes /> : <FaCog />}
         </button>
       </div>
     </div>
