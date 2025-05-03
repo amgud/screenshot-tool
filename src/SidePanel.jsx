@@ -157,8 +157,7 @@ export default function SidePanel() {
               setResponseData({
                 type: 'error',
                 message:
-                  'Error enabling selection: ' +
-                  chrome.runtime.lastError.message,
+                  'Error enabling selection. Please refresh the page and try again.',
               });
               return;
             }
