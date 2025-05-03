@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ResponseContainer = ({ data, parseMarkdown }) => {
+export default function ResponseContainer({ data, parseMarkdown }) {
   if (!data) return null;
 
   return (
@@ -48,6 +48,4 @@ const ResponseContainer = ({ data, parseMarkdown }) => {
       )}
     </div>
   );
-};
-
-export default ResponseContainer;
+}

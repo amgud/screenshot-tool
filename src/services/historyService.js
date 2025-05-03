@@ -9,16 +9,16 @@ const MAX_HISTORY_ITEMS = 50; // Maximum number of history items to store
  * Generate a unique ID for history items
  * @returns {string} A unique ID
  */
-const generateId = () => {
+function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substring(2);
-};
+}
 
 /**
  * Create a thumbnail from a screenshot
  * @param {string} screenshotUrl - The data URL of the screenshot
  * @returns {Promise<string>} The data URL of the thumbnail
  */
-const createThumbnail = (screenshotUrl) => {
+function createThumbnail(screenshotUrl) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
@@ -47,20 +47,20 @@ const createThumbnail = (screenshotUrl) => {
 
     img.src = screenshotUrl;
   });
-};
+}
 
 /**
  * Load screenshot history from storage
  * @returns {Promise<Array>} Array of history items
  */
-export const loadScreenshotHistory = async () => {
+export async function loadScreenshotHistory() {
   return new Promise((resolve) => {
     chrome.storage.local.get([HISTORY_STORAGE_KEY], (result) => {
       const history = result[HISTORY_STORAGE_KEY] || [];
       resolve(history);
     });
   });
-};
+}
 
 /**
  * Save a new item to the screenshot history
@@ -69,11 +69,7 @@ export const loadScreenshotHistory = async () => {
  * @param {Array} currentHistory - The current history array
  * @returns {Promise<Array>} Updated history array
  */
-export const saveToHistory = async (
-  screenshotUrl,
-  response,
-  currentHistory
-) => {
+export async function saveToHistory(screenshotUrl, response, currentHistory) {
   try {
     // Create a thumbnail
     const thumbnailUrl = await createThumbnail(screenshotUrl);
@@ -107,14 +103,14 @@ export const saveToHistory = async (
     console.error('Error saving to history:', error);
     return currentHistory || [];
   }
-};
+}
 
 /**
  * Delete an item from history
  * @param {string} itemId - The ID of the item to delete
  * @returns {Promise<Array>} Updated history array
  */
-export const deleteHistoryItem = async (itemId) => {
+export async function deleteHistoryItem(itemId) {
   try {
     // Load current history
     const history = await loadScreenshotHistory();
@@ -130,7 +126,7 @@ export const deleteHistoryItem = async (itemId) => {
     console.error('Error deleting history item:', error);
     return null;
   }
-};
+}
 
 /**
  * Get a specific history item by ID
@@ -138,10 +134,10 @@ export const deleteHistoryItem = async (itemId) => {
  * @param {Array} history - The history array to search in
  * @returns {Object|null} The history item or null if not found
  */
-export const getHistoryItem = (itemId, history) => {
+export function getHistoryItem(itemId, history) {
   if (!history || !Array.isArray(history)) {
     return null;
   }
 
   return history.find((item) => item.id === itemId) || null;
-};
+}

@@ -7,7 +7,7 @@ import {
   getDefaultInstruction,
 } from '../services/settingsService';
 
-const SettingsPanel = ({ onCustomInstructionChange }) => {
+export default function SettingsPanel({ onCustomInstructionChange }) {
   const [apiKey, setApiKey] = useState('');
   const [apiKeyVisible, setApiKeyVisible] = useState(false);
   const [customInstruction, setCustomInstruction] = useState('');
@@ -151,6 +151,4 @@ const SettingsPanel = ({ onCustomInstructionChange }) => {
       </div>
     </div>
   );
-};
-
-export default SettingsPanel;
+}

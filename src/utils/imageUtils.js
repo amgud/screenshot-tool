@@ -29,11 +29,11 @@ export const extractBase64FromDataUrl = (dataUrl) => {
  * @param {number} devicePixelRatio - The device pixel ratio for scaling
  * @returns {Promise<string>} A data URL for the cropped image
  */
-export const processAreaScreenshot = (
+export function processAreaScreenshot(
   fullScreenDataUrl,
   area,
   devicePixelRatio
-) => {
+) {
   return new Promise((resolve, reject) => {
     try {
       // Create an image from the data URL
@@ -83,4 +83,4 @@ export const processAreaScreenshot = (
       reject(error);
     }
   });
-};
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const HistoryPanel = ({ history, onSelectItem }) => {
+export default function HistoryPanel({ history, onSelectItem }) {
   // Sort history items by timestamp (newest first)
   const sortedHistory = [...history].sort((a, b) => b.timestamp - a.timestamp);
 
@@ -49,6 +49,4 @@ const HistoryPanel = ({ history, onSelectItem }) => {
       </div>
     </div>
   );
-};
-
-export default HistoryPanel;
+}
