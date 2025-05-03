@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaSpinner, FaPaperPlane } from 'react-icons/fa';
 
 export default function SendButton({ onSendToGemini, disabled, isLoading }) {
   return (
@@ -9,7 +10,25 @@ export default function SendButton({ onSendToGemini, disabled, isLoading }) {
         disabled={disabled}
         onClick={onSendToGemini}
       >
-        {isLoading ? '🔄 Sending...' : '🚀 Send to Gemini AI'}
+        {isLoading ? (
+          <>
+            <FaSpinner
+              style={{
+                marginRight: '8px',
+                verticalAlign: 'middle',
+                animation: 'spin 1s linear infinite',
+              }}
+            />
+            Sending...
+          </>
+        ) : (
+          <>
+            <FaPaperPlane
+              style={{ marginRight: '8px', verticalAlign: 'middle' }}
+            />
+            Send to Gemini AI
+          </>
+        )}
       </button>
     </div>
   );
