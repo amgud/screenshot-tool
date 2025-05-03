@@ -4,9 +4,10 @@ import fs from 'fs';
 // clean up the dist directory if it exists
 if (fs.existsSync('./dist')) {
   fs.rmSync('./dist', { recursive: true });
-  fs.mkdirSync('./dist');
-  fs.mkdirSync('./dist/icons');
 }
+
+fs.mkdirSync('./dist');
+fs.mkdirSync('./dist/icons');
 
 // Copy static files
 const staticFiles = [
