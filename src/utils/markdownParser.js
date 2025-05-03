@@ -17,7 +17,7 @@ marked.setOptions({
  * @param {string} markdown - The markdown text to parse
  * @returns {string} HTML representation of the markdown
  */
-export const parseMarkdown = (markdown) => {
+export function parseMarkdown(markdown) {
   if (!markdown) return '';
 
   try {
@@ -26,10 +26,9 @@ export const parseMarkdown = (markdown) => {
 
     // Note: In a production app, you should use DOMPurify.sanitize(html)
     // to sanitize the HTML and prevent XSS attacks
-
     return html;
   } catch (error) {
     console.error('Error parsing markdown:', error);
     return '<p>Error parsing markdown content</p>';
   }
-};
+}

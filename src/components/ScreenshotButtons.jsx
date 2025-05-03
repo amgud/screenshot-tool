@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ScreenshotButtons = ({ onTakeScreenshot, onSelectArea }) => {
+export default function ScreenshotButtons({ onTakeScreenshot, onSelectArea }) {
   return (
     <div className="button-group">
       <button
@@ -19,6 +19,4 @@ const ScreenshotButtons = ({ onTakeScreenshot, onSelectArea }) => {
       </button>
     </div>
   );
-};
-
-export default ScreenshotButtons;
+}

@@ -69,7 +69,7 @@ export async function sendImageToGemini(base64ImageData, instruction, apiKey) {
  * @param {Object} response - The Gemini API response object
  * @returns {string|null} The extracted text or null if not found
  */
-export const extractTextFromGeminiResponse = (response) => {
+export function extractTextFromGeminiResponse(response) {
   try {
     if (!response || !response.candidates || response.candidates.length === 0) {
       return null;
@@ -93,4 +93,4 @@ export const extractTextFromGeminiResponse = (response) => {
     console.error('Error extracting text from Gemini response:', error);
     return null;
   }
-};
+}
