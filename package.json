@@ -17,8 +17,8 @@
   "devDependencies": {
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/bun": "^1.2.11",
-    "@types/chrome": "^0.0.317"
+    "@types/bun": "1.2.12",
+    "@types/chrome": "^0.0.320"
   },
   "peerDependencies": {
     "typescript": "^5.8.2"

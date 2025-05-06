@@ -21,10 +21,10 @@ const staticFiles = [
 staticFiles.forEach((file) => {
   try {
     fs.copyFileSync(file.src, file.dest);
-    console.log(`Copied ${file.src} to ${file.dest}`);
+    console.log(`📁 Copied ${file.src} to ${file.dest}`);
   } catch (err) {
-    console.error(`Error copying ${file.src}:`, err);
+    console.error(`❌ Error copying ${file.src}:`, err);
   }
 });
 
-console.log('Static files copied successfully');
+console.log('✨ Static files copied successfully');
