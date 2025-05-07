@@ -1,10 +1,6 @@
 name: Build Extension Bundle
 
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
   workflow_dispatch:
 
 jobs:
