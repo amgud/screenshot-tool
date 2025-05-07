@@ -1,12 +1,12 @@
 {
-  "name": "gemini-screenshots",
+  "name": "screenshot-tool",
   "module": "index.ts",
   "type": "module",
   "private": true,
   "scripts": {
     "build": "bun build.js && bun build --target=browser --outdir=dist --define:process.env.NODE_ENV='\"production\"' sidepanel.html background.js content.js",
     "watch": "bun run build --watch",
-    "package": "bun run build && cd dist && zip -r ../extension.zip *"
+    "package": "bun run build && cd dist && zip -r ../screenshot-tool-extension.zip *"
   },
   "dependencies": {
     "marked": "^15.0.11",
