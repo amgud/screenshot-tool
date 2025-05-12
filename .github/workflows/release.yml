@@ -56,11 +56,3 @@ jobs:
           files: screenshot-tool-extension.zip
           generate_release_notes: true
           draft: false
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: Release ${{ steps.get_version.outputs.VERSION }}
-          files: screenshot-tool-extension.zip
-          generate_release_notes: true
-          draft: false
