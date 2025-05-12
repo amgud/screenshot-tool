@@ -13,21 +13,22 @@ A Chrome extension that allows users to capture screenshots of web pages and ana
 
 ### Creating a Release
 
-This project uses GitHub's release feature with Actions to automate the build process:
+This project uses GitHub Actions to automate the release process:
 
-1. Go to your repository on GitHub and click on "Releases" in the sidebar
-2. Click "Create a new release" or "Draft a new release"
-3. Enter a tag version (e.g., "v1.0.1") and release title
-4. Add description/release notes
-5. Click "Publish release"
+1. Run the release script with the new version number:
 
-After publishing, GitHub Actions will automatically:
+   ```bash
+   ./create-release.sh 1.0.1
+   ```
 
-- Build the extension
-- Package it as a ZIP file
-- Attach it to your release
+2. This will:
 
-This provides a simple way to manage releases without scripts or manual versioning.
+   - Update the version in manifest.json
+   - Commit the changes
+   - Create and push a new tag (e.g., v1.0.1)
+   - Trigger the GitHub Actions workflow to create a release
+
+3. The release will be automatically created on GitHub with the packaged extension attached.
 
 ## About This Project
 
