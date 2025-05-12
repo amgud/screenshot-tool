@@ -17,9 +17,13 @@ sed -i '' "s/\"version\": \"[0-9.]*\"/\"version\": \"$VERSION\"/" manifest.json
 git add manifest.json
 git commit -m "Bump version to $VERSION"
 
+# Push the commit to main branch
+git push origin main
+
 # Create and push tag
 git tag "v$VERSION"
 git push origin "v$VERSION"
 
-echo "Version bumped to $VERSION and tag v$VERSION pushed."
+echo "Version bumped to $VERSION and changes pushed to main branch."
+echo "Tag v$VERSION has been pushed."
 echo "GitHub Actions workflow should start soon to create the release."
