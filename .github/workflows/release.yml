@@ -1,8 +1,9 @@
-name: Build Release Artifact
+name: Create Release
 
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - 'v*' # Push events to tags matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   build:
@@ -25,10 +26,36 @@ jobs:
       - name: Package extension
         run: bun run package
 
-      - name: Upload to Release
-        uses: softprops/action-gh-release@v2
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
         with:
+          name: screenshot-tool-extension
+          path: screenshot-tool-extension.zip
+          retention-days: 7
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download extension artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: screenshot-tool-extension
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ steps.get_version.outputs.VERSION }}
           files: screenshot-tool-extension.zip
+          generate_release_notes: true
+          draft: false
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
