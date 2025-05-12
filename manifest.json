@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Screenshot Tool",
-  "version": "1.0",
+  "version": "1.0.1",
   "description": "Take screenshots of your browser",
   "background": {
     "service_worker": "background.js"
