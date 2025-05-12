@@ -9,6 +9,26 @@ A Chrome extension that allows users to capture screenshots of web pages and ana
 - **Gemini AI Integration**: Send screenshots to Gemini AI for detailed image analysis
 - **Convenient Side Panel**: All controls and previews in an easy-to-use side panel
 
+## Development
+
+### Creating a Release
+
+This project uses GitHub's release feature with Actions to automate the build process:
+
+1. Go to your repository on GitHub and click on "Releases" in the sidebar
+2. Click "Create a new release" or "Draft a new release"
+3. Enter a tag version (e.g., "v1.0.1") and release title
+4. Add description/release notes
+5. Click "Publish release"
+
+After publishing, GitHub Actions will automatically:
+
+- Build the extension
+- Package it as a ZIP file
+- Attach it to your release
+
+This provides a simple way to manage releases without scripts or manual versioning.
+
 ## About This Project
 
 This project was developed with assistance from GitHub Copilot, which contributed approximately 75-80% of the code. The AI helped generate the core functionality, while human input was essential for fine-tuning the user experience and integrating with Chrome extension APIs. The extension demonstrates practical application of Google's Gemini AI API for image analysis within a browser context.
