@@ -59,25 +59,32 @@ export function enableSelectionMode() {
   overlay.addEventListener('mouseup', (e) => {
     if (!isSelecting) return;
     isSelecting = false;
-
+    console.log('🔍 Selection completed, preparing for screenshot');
     // Get the coordinates of the selection
     const rect = selectionBox.getBoundingClientRect();
+
+    // Store the selection coordinates and pixel ratio
+    const devicePixelRatio = window.devicePixelRatio || 1;
+    const screenshotArea = {
+      x: Math.round(rect.left * devicePixelRatio),
+      y: Math.round(rect.top * devicePixelRatio),
+      width: Math.round(rect.width * devicePixelRatio),
+      height: Math.round(rect.height * devicePixelRatio),
+    };
+
     // Remove overlay
     document.body.removeChild(overlay);
 
-    // Account for device pixel ratio to ensure correct cropping
-    const devicePixelRatio = window.devicePixelRatio || 1;
-
-    // Send the coordinates to the background script
-    chrome.runtime.sendMessage({
-      action: 'areaScreenshot',
-      area: {
-        x: Math.round(rect.left * devicePixelRatio),
-        y: Math.round(rect.top * devicePixelRatio),
-        width: Math.round(rect.width * devicePixelRatio),
-        height: Math.round(rect.height * devicePixelRatio),
-      },
-      devicePixelRatio: devicePixelRatio,
+    // Use requestAnimationFrame to ensure the DOM has been updated
+    // This will execute right after the browser has processed the DOM changes
+    // but before the next repaint
+    requestAnimationFrame(() => {
+      // Send the coordinates to the background script
+      chrome.runtime.sendMessage({
+        action: 'areaScreenshot',
+        area: screenshotArea,
+        devicePixelRatio: devicePixelRatio,
+      });
     });
   });
 }
