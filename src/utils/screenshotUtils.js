@@ -59,7 +59,6 @@ export function enableSelectionMode() {
   overlay.addEventListener('mouseup', (e) => {
     if (!isSelecting) return;
     isSelecting = false;
-    console.log('🔍 Selection completed, preparing for screenshot');
     // Get the coordinates of the selection
     const rect = selectionBox.getBoundingClientRect();
 
