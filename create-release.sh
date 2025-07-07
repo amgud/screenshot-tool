@@ -21,8 +21,8 @@ git commit -m "Bump version to $VERSION"
 git tag "v$VERSION"
 
 # Push both commit and tag in one command
-git push origin main --tags
+git push origin master --tags
 
-echo "Version bumped to $VERSION and changes pushed to main branch."
+echo "Version bumped to $VERSION and changes pushed to master branch."
 echo "Tag v$VERSION has been pushed."
 echo "GitHub Actions workflow should start soon to create the release."
