@@ -4,7 +4,7 @@ import PreviewArea from './components/PreviewArea';
 import ResponseContainer from './components/ResponseContainer';
 import HistoryPanel from './components/HistoryPanel';
 import SettingsPanel from './components/SettingsPanel';
-import SendButton from './components/SendButton';
+import ActionButton from './components/ActionButton';
 import {
   loadScreenshotHistory,
   saveToHistory,
@@ -344,7 +344,7 @@ export default function SidePanel() {
               {responseData.message}
             </div>
           )}
-          <SendButton
+          <ActionButton
             onSelectArea={handleSelectArea}
             onTakeScreenshot={handleTakeScreenshot}
             onSendToGemini={handleSendToGemini}

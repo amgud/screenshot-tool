@@ -3,7 +3,7 @@
  */
 
 // Default instruction for Gemini
-const DEFAULT_INSTRUCTION = 'Answer the question from the screenshot.';
+const DEFAULT_INSTRUCTION = 'Answer the question from the screenshot concisely.';
 
 /**
  * Loads the API key from chrome storage
