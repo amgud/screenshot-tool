@@ -5,7 +5,7 @@
 // Default API key - users should replace this with their own
 const DEFAULT_API_KEY = '';
 const API_URL =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
 
 /**
  * Send an image to the Gemini AI for analysis
