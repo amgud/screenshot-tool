@@ -200,7 +200,6 @@ export default function SidePanel() {
           // Set response data
           setResponseData({
             type: 'success',
-            message: 'Screenshot sent to Gemini AI successfully!',
             content: geminiText || null,
           });
 
@@ -336,17 +335,25 @@ export default function SidePanel() {
         />
       )}
 
-      {/* Action Buttons */}
+      {/* Status bar + Action Button */}
       {!showHistoryPanel && !showSettingsPanel && (
-        <SendButton
-          onSelectArea={handleSelectArea}
-          onTakeScreenshot={handleTakeScreenshot}
-          onSendToGemini={handleSendToGemini}
-          onClearResults={() => { setResponseData(null); setCurrentScreenshot(null); }}
-          isLoading={isLoading}
-          hasScreenshot={!!currentScreenshot}
-          hasResponse={!!(responseData && (responseData.type === 'success' || responseData.type === 'history'))}
-        />
+        <>
+          {responseData && responseData.message && (
+            <div className={`status-bar status-bar--${responseData.type}`}>
+              <span className="status-bar__dot" />
+              {responseData.message}
+            </div>
+          )}
+          <SendButton
+            onSelectArea={handleSelectArea}
+            onTakeScreenshot={handleTakeScreenshot}
+            onSendToGemini={handleSendToGemini}
+            onClearResults={() => { setResponseData(null); setCurrentScreenshot(null); }}
+            isLoading={isLoading}
+            hasScreenshot={!!currentScreenshot}
+            hasResponse={!!(responseData && (responseData.type === 'success' || responseData.type === 'history'))}
+          />
+        </>
       )}
     </div>
   );

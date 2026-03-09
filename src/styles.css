@@ -174,30 +174,48 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.success-message {
+/* Status bar */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.status-bar--success {
+  background-color: #e6f4ea;
   color: #0f9d58;
-  font-weight: bold;
+  border: 1px solid #ceead6;
 }
 
-.error-message {
+.status-bar--history {
+  background-color: #e8f0fe;
+  color: #1a73e8;
+  border: 1px solid #c5d8fd;
+}
+
+.status-bar--error {
+  background-color: #fce8e6;
   color: #d93025;
-  font-size: 14px;
-  font-weight: bold;
+  border: 1px solid #f5c6c3;
 }
 
-.warning-message {
-  color: #f29900;
-  font-weight: bold;
+.status-bar--warning {
+  background-color: #fef7e0;
+  color: #b06000;
+  border: 1px solid #fde293;
 }
 
-.response-message {
-  margin-top: 16px;
-}
-
-.response-message h3 {
-  font-size: 16px;
-  margin-bottom: 8px;
-  color: #202124;
+.status-bar__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: currentColor;
+  flex-shrink: 0;
 }
 
 .response-text {
