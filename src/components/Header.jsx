@@ -17,7 +17,7 @@ export default function Header({
       <div className="header-icon-buttons">
         <button
           className="icon-btn"
-          title={viewingHistoryItem ? 'Clear History View' : 'View History'}
+          title={viewingHistoryItem || showHistoryPanel ? 'Close History' : 'View History'}
           onClick={onHistoryToggle}
         >
           {viewingHistoryItem || showHistoryPanel ? <FaTimes /> : <FaHistory />}

@@ -1,15 +1,33 @@
 import React from 'react';
-import { FaSpinner, FaPaperPlane, FaTimes, FaCrop, FaCamera, FaCheck } from 'react-icons/fa';
+import { FaSpinner, FaPaperPlane, FaTimes, FaCrop, FaCamera, FaCheck, FaArrowLeft } from 'react-icons/fa';
 
 export default function ActionButton({
   onSelectArea,
   onTakeScreenshot,
   onSendToGemini,
   onClearResults,
+  onBackToHistory,
   isLoading,
   hasScreenshot,
   hasResponse,
+  viewingHistoryItem,
 }) {
+  if (viewingHistoryItem) {
+    return (
+      <div className="action-buttons">
+        <div className="split-btn">
+          <button
+            className="split-btn__main"
+            onClick={onBackToHistory}
+          >
+            <FaArrowLeft style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+            Back to History
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (hasResponse) {
     return (
       <div className="action-buttons">

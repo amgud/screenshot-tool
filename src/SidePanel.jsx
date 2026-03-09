@@ -227,8 +227,9 @@ export default function SidePanel() {
 
   // Handler for toggling history panel
   const handleToggleHistory = () => {
-    if (viewingHistoryItem) {
-      // Reset history view
+    if (showHistoryPanel || viewingHistoryItem) {
+      // Closing or exiting history item: reset to initial state
+      setShowHistoryPanel(false);
       setViewingHistoryItem(false);
       setActiveHistoryItemId(null);
       setCurrentScreenshot(null);
@@ -236,19 +237,23 @@ export default function SidePanel() {
       return;
     }
 
-    // Close settings panel if open
+    // Opening: close settings panel if open
     if (showSettingsPanel) {
       setShowSettingsPanel(false);
     }
 
-    // Toggle history panel
-    const newHistoryState = !showHistoryPanel;
-    setShowHistoryPanel(newHistoryState);
+    setShowHistoryPanel(true);
+    loadHistoryPanel();
+  };
 
-    // Load history when panel is opened
-    if (newHistoryState) {
-      loadHistoryPanel();
-    }
+  // Handler for going back to history from a history item view
+  const handleBackToHistory = () => {
+    setViewingHistoryItem(false);
+    setActiveHistoryItemId(null);
+    setCurrentScreenshot(null);
+    setResponseData(null);
+    setShowHistoryPanel(true);
+    loadHistoryPanel();
   };
 
   // Handler for toggling settings panel
@@ -349,9 +354,11 @@ export default function SidePanel() {
             onTakeScreenshot={handleTakeScreenshot}
             onSendToGemini={handleSendToGemini}
             onClearResults={() => { setResponseData(null); setCurrentScreenshot(null); }}
+            onBackToHistory={handleBackToHistory}
             isLoading={isLoading}
             hasScreenshot={!!currentScreenshot}
             hasResponse={!!(responseData && (responseData.type === 'success' || responseData.type === 'history'))}
+            viewingHistoryItem={viewingHistoryItem}
           />
         </>
       )}
