@@ -144,8 +144,8 @@ export default function SettingsPanel({ onCustomInstructionChange }) {
           Your API key is stored locally and is never sent to our servers.
         </p>
         <p className="note">
-          Get a key at:
-          <a href="https://aistudio.google.com/app/apikey" target="_blank">
+          Get a key at:{' '}
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">
             Google AI Studio
           </a>
         </p>

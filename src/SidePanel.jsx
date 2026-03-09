@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
-import ScreenshotButtons from './components/ScreenshotButtons';
 import PreviewArea from './components/PreviewArea';
 import ResponseContainer from './components/ResponseContainer';
 import HistoryPanel from './components/HistoryPanel';
@@ -311,13 +310,6 @@ export default function SidePanel() {
       {/* Main content section that will be hidden when history or settings is open */}
       {!showHistoryPanel && !showSettingsPanel && (
         <div className="main-content" id="mainContent">
-          {!viewingHistoryItem && (
-            <ScreenshotButtons
-              onTakeScreenshot={handleTakeScreenshot}
-              onSelectArea={handleSelectArea}
-            />
-          )}
-
           <PreviewArea screenshot={currentScreenshot} />
 
           {responseData && (
@@ -347,9 +339,13 @@ export default function SidePanel() {
       {/* Action Buttons */}
       {!showHistoryPanel && !showSettingsPanel && (
         <SendButton
+          onSelectArea={handleSelectArea}
+          onTakeScreenshot={handleTakeScreenshot}
           onSendToGemini={handleSendToGemini}
-          disabled={!currentScreenshot || isLoading}
+          onClearResults={() => { setResponseData(null); setCurrentScreenshot(null); }}
           isLoading={isLoading}
+          hasScreenshot={!!currentScreenshot}
+          hasResponse={!!(responseData && (responseData.type === 'success' || responseData.type === 'history'))}
         />
       )}
     </div>

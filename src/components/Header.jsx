@@ -12,7 +12,7 @@ export default function Header({
     <div className="header">
       <div className="title-area">
         <h1>Screenshot Tool</h1>
-        <p>Take screenshots of your browser and view them here</p>
+        <p>Capture & analyze browser screenshots</p>
       </div>
       <div className="header-icon-buttons">
         <button
