@@ -1,4 +1,5 @@
 import React from 'react';
+import { parseMarkdown } from '../utils/markdownParser';
 
 export default function HistoryPanel({ history, onSelectItem }) {
   // Sort history items by timestamp (newest first)
@@ -38,9 +39,10 @@ export default function HistoryPanel({ history, onSelectItem }) {
                     className="history-thumbnail"
                     alt="Screenshot thumbnail"
                   />
-                  <div className="history-response-preview">
-                    {responsePreview}
-                  </div>
+                  <div
+                    className="history-response-preview markdown-content"
+                    dangerouslySetInnerHTML={{ __html: parseMarkdown(responsePreview) }}
+                  />
                 </div>
               </div>
             );
