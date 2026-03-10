@@ -13,22 +13,24 @@ A Chrome extension that allows users to capture screenshots of web pages and ana
 
 ### Creating a Release
 
-This project uses GitHub Actions to automate the release process:
+This project uses GitHub Actions to automate the release process. Run the release command and pick a version bump type:
 
-1. Run the release script with the new version number:
+```bash
+bun run release          # interactive prompt to pick next version
+bun run release patch    # bump patch version (1.0.0 → 1.0.1)
+bun run release minor    # bump minor version (1.0.0 → 1.1.0)
+bun run release major    # bump major version (1.0.0 → 2.0.0)
+bun run release 1.2.3    # set an explicit version
+```
 
-   ```bash
-   ./create-release.sh 1.0.1
-   ```
+This will:
 
-2. This will:
+- Update the version in `manifest.json`
+- Commit the changes
+- Create and push a new tag (e.g., `v1.0.1`)
+- Trigger the GitHub Actions workflow to create a release
 
-   - Update the version in manifest.json
-   - Commit the changes
-   - Create and push a new tag (e.g., v1.0.1)
-   - Trigger the GitHub Actions workflow to create a release
-
-3. The release will be automatically created on GitHub with the packaged extension attached.
+The release will be automatically created on GitHub with the packaged extension attached.
 
 ## About This Project
 
