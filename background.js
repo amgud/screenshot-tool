@@ -1,6 +1,22 @@
 import { sendImageToGemini } from './src/services/geminiService.js';
 import { loadApiKey, saveApiKey } from './src/services/settingsService.js';
 
+// ─── Dev hot-reload ──────────────────────────────────────────────────────────
+// Connects to the local dev-server.js WebSocket. In production the connection
+// attempt silently fails (the server isn't running) so this is safe to ship.
+try {
+  const _devWs = new WebSocket('ws://localhost:8181');
+  _devWs.onmessage = () => {
+    // Reload the active tab so updated content scripts take effect, then
+    // reload the extension itself so the new background/sidepanel are loaded.
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) chrome.tabs.reload(tabs[0].id);
+    });
+    setTimeout(() => chrome.runtime.reload(), 200);
+  };
+} catch (_) {}
+// ─────────────────────────────────────────────────────────────────────────────
+
 console.log('Background script running.');
 
 let sidePanelOpen = false;

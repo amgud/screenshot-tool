@@ -35,6 +35,7 @@ export default function SidePanel() {
   const [showSettingsPanel, setShowSettingsPanel] = useState(false);
   const [responseData, setResponseData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSelectingArea, setIsSelectingArea] = useState(false);
 
   // Initialize settings and message listeners
   useEffect(() => {
@@ -48,7 +49,13 @@ export default function SidePanel() {
 
     // Set up message listeners
     const messageListener = (request, sender, sendResponse) => {
+      if (request.action === 'selectionCancelled') {
+        setIsSelectingArea(false);
+        return true;
+      }
+
       if (request.action === 'areaScreenshot') {
+        setIsSelectingArea(false);
         console.log('Area screenshot request received:', request);
         // Capture the selected area
         chrome.tabs.captureVisibleTab(
@@ -91,11 +98,20 @@ export default function SidePanel() {
 
     chrome.runtime.onMessage.addListener(messageListener);
 
+    // Handle Esc key while selection mode is active
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isSelectingArea) {
+        handleCancelSelectArea();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
     // Clean up listener on component unmount
     return () => {
       chrome.runtime.onMessage.removeListener(messageListener);
+      window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [isSelectingArea]);
 
   // Handler for taking a full page screenshot
   const handleTakeScreenshot = () => {
@@ -161,6 +177,7 @@ export default function SidePanel() {
               return;
             }
             console.log('Selection mode enabled', response);
+            setIsSelectingArea(true);
           }
         );
       } catch (error) {
@@ -170,6 +187,15 @@ export default function SidePanel() {
           message: 'Failed to enable selection mode: ' + error.message,
         });
       }
+    });
+  };
+
+  // Handler for cancelling area selection mode
+  const handleCancelSelectArea = () => {
+    setIsSelectingArea(false);
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (!tabs || tabs.length === 0) return;
+      chrome.tabs.sendMessage(tabs[0].id, { action: 'cancelSelection' });
     });
   };
 
@@ -355,10 +381,12 @@ export default function SidePanel() {
             onSendToGemini={handleSendToGemini}
             onClearResults={() => { setResponseData(null); setCurrentScreenshot(null); }}
             onBackToHistory={handleBackToHistory}
+            onCancelSelectArea={handleCancelSelectArea}
             isLoading={isLoading}
             hasScreenshot={!!currentScreenshot}
             hasResponse={!!(responseData && (responseData.type === 'success' || responseData.type === 'history'))}
             viewingHistoryItem={viewingHistoryItem}
+            isSelectingArea={isSelectingArea}
           />
         </>
       )}

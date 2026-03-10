@@ -1,4 +1,4 @@
-import { enableSelectionMode } from './src/utils/screenshotUtils.js';
+import { enableSelectionMode, cancelSelectionMode } from './src/utils/screenshotUtils.js';
 
 console.log('Content script is running.');
 
@@ -7,5 +7,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'enableSelection') {
     enableSelectionMode();
     sendResponse({ status: 'Selection mode enabled' });
+  }
+
+  if (message.action === 'cancelSelection') {
+    cancelSelectionMode();
+    sendResponse({ status: 'Selection mode cancelled' });
   }
 });

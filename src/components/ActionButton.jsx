@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaSpinner, FaPaperPlane, FaTimes, FaCrop, FaCamera, FaCheck, FaArrowLeft } from 'react-icons/fa';
+import { FaSpinner, FaPaperPlane, FaTimes, FaCrop, FaCamera, FaCheck, FaArrowLeft, FaBan } from 'react-icons/fa';
 
 export default function ActionButton({
   onSelectArea,
@@ -7,10 +7,12 @@ export default function ActionButton({
   onSendToGemini,
   onClearResults,
   onBackToHistory,
+  onCancelSelectArea,
   isLoading,
   hasScreenshot,
   hasResponse,
   viewingHistoryItem,
+  isSelectingArea,
 }) {
   if (viewingHistoryItem) {
     return (
@@ -74,6 +76,22 @@ export default function ActionButton({
               <FaTimes style={{ verticalAlign: 'middle' }} />
             </button>
           )}
+        </div>
+      </div>
+    );
+  }
+
+  if (isSelectingArea) {
+    return (
+      <div className="action-buttons">
+        <div className="split-btn">
+          <button
+            className="split-btn__main split-btn__main--clear"
+            onClick={onCancelSelectArea}
+          >
+            <FaBan style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+            Cancel Selection
+          </button>
         </div>
       </div>
     );

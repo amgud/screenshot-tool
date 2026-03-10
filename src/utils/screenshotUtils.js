@@ -2,6 +2,9 @@
  * Utility functions for screenshot selection in the browser
  */
 
+// Tracks the active cleanup function so selection can be cancelled externally
+let activeCleanup = null;
+
 /**
  * Enables screenshot area selection mode in the browser
  * Creates an overlay that allows the user to select an area to screenshot
@@ -30,6 +33,24 @@ export function enableSelectionMode() {
 
   overlay.appendChild(selectionBox);
   document.body.appendChild(overlay);
+
+  function removeOverlay() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+    document.removeEventListener('keydown', handleKeyDown);
+    activeCleanup = null;
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === 'Escape') {
+      removeOverlay();
+      chrome.runtime.sendMessage({ action: 'selectionCancelled' });
+    }
+  }
+
+  document.addEventListener('keydown', handleKeyDown);
+  activeCleanup = removeOverlay;
 
   // Mouse events for selection
   overlay.addEventListener('mousedown', (e) => {
@@ -72,7 +93,7 @@ export function enableSelectionMode() {
     };
 
     // Remove overlay
-    document.body.removeChild(overlay);
+    removeOverlay();
 
     // Use requestAnimationFrame to ensure the DOM has been updated
     // This will execute right after the browser has processed the DOM changes
@@ -86,6 +107,16 @@ export function enableSelectionMode() {
       });
     });
   });
+}
+
+/**
+ * Cancels the active selection mode and removes the overlay.
+ * Called when a cancelSelection message is received from the side panel.
+ */
+export function cancelSelectionMode() {
+  if (activeCleanup) {
+    activeCleanup();
+  }
 }
 
 /**
