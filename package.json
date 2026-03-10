@@ -1,5 +1,6 @@
 {
   "name": "screenshot-tool",
+  "version": "1.0.2",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -7,7 +8,7 @@
     "dev": "bun dev-server.js & bun run build --watch",
     "build": "bun build.js && bun build --target=browser --outdir=dist --define:process.env.NODE_ENV='\"production\"' sidepanel.html background.js content.js",
     "package": "bun run build && cd dist && zip -r ../screenshot-tool-extension.zip *",
-    "release": "bumpp --files manifest.json"
+    "release": "bumpp package.json manifest.json"
   },
   "dependencies": {
     "marked": "^15.0.11",
