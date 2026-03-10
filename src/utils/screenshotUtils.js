@@ -92,18 +92,21 @@ export function enableSelectionMode() {
       height: Math.round(rect.height * devicePixelRatio),
     };
 
-    // Remove overlay
+    // Hide the overlay visually before removing it so the browser paints
+    // a clean frame without the selection UI before the screenshot is taken.
+    overlay.style.display = 'none';
     removeOverlay();
 
-    // Use requestAnimationFrame to ensure the DOM has been updated
-    // This will execute right after the browser has processed the DOM changes
-    // but before the next repaint
+    // Double requestAnimationFrame: the first fires before the next paint,
+    // the second fires after it — ensuring the overlay is gone from the
+    // composited frame that captureVisibleTab will capture.
     requestAnimationFrame(() => {
-      // Send the coordinates to the background script
-      chrome.runtime.sendMessage({
-        action: 'areaScreenshot',
-        area: screenshotArea,
-        devicePixelRatio: devicePixelRatio,
+      requestAnimationFrame(() => {
+        chrome.runtime.sendMessage({
+          action: 'areaScreenshot',
+          area: screenshotArea,
+          devicePixelRatio: devicePixelRatio,
+        });
       });
     });
   });
