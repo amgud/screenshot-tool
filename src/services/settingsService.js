@@ -65,3 +65,19 @@ export async function saveCustomInstruction(instruction) {
 export function getDefaultInstruction() {
   return DEFAULT_INSTRUCTION;
 }
+
+export async function loadShowSelectionDimensions() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['showSelectionDimensions'], (result) => {
+      resolve(result.showSelectionDimensions || false);
+    });
+  });
+}
+
+export async function saveShowSelectionDimensions(value) {
+  return new Promise((resolve) => {
+    chrome.storage.local.set({ showSelectionDimensions: value }, () => {
+      resolve(true);
+    });
+  });
+}

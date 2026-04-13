@@ -6,32 +6,134 @@
 let activeCleanup = null;
 
 /**
- * Enables screenshot area selection mode in the browser
- * Creates an overlay that allows the user to select an area to screenshot
+ * Enables screenshot area selection mode in the browser.
+ * Draw a selection, then resize (via 8 edge/corner handles) or move it.
+ * Every mouseup sends crop coordinates to the side panel which re-crops from
+ * a pre-captured full-tab image — the overlay never hides, so there's no blink.
+ * @param {Object} [options]
+ * @param {boolean} [options.showDimensions=false] Show width×height label
  */
-export function enableSelectionMode() {
-  // Create overlay for selection
+export function enableSelectionMode(options = {}) {
+  const { showDimensions = false } = options;
+  const HANDLE_SIZE = 10;
+  const HANDLE_HALF = HANDLE_SIZE / 2;
+
+  // ── Overlay ───────────────────────────────────────────────────────────────
   const overlay = document.createElement('div');
-  overlay.style.position = 'fixed';
-  overlay.style.top = '0';
-  overlay.style.left = '0';
-  overlay.style.width = '100%';
-  overlay.style.height = '100%';
-  overlay.style.background = 'rgba(0, 0, 0, 0.3)';
-  overlay.style.zIndex = '9999';
-  overlay.style.cursor = 'crosshair';
+  Object.assign(overlay.style, {
+    position: 'fixed',
+    top: '0',
+    left: '0',
+    width: '100%',
+    height: '100%',
+    background: 'transparent',
+    zIndex: '9999',
+    cursor: 'crosshair',
+  });
 
-  let isSelecting = false;
-  let startX, startY;
-
-  // Create selection box
+  // ── Selection box ─────────────────────────────────────────────────────────
   const selectionBox = document.createElement('div');
-  selectionBox.style.position = 'absolute';
-  selectionBox.style.border = '2px dashed #4285f4';
-  selectionBox.style.background = 'rgba(66, 133, 244, 0.1)';
-  selectionBox.style.display = 'none';
-
+  Object.assign(selectionBox.style, {
+    position: 'absolute',
+    border: 'none',
+    outline: '2px dashed #e0e0e0',
+    outlineOffset: '0px',
+    background: 'transparent',
+    boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.3)',
+    display: 'none',
+    cursor: 'move',
+  });
   overlay.appendChild(selectionBox);
+
+  // ── Dimension label ───────────────────────────────────────────────────────
+  const dimLabel = document.createElement('div');
+  Object.assign(dimLabel.style, {
+    position: 'absolute',
+    bottom: '-24px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    background: 'rgba(0,0,0,0.7)',
+    color: '#fff',
+    fontSize: '11px',
+    padding: '2px 6px',
+    borderRadius: '3px',
+    whiteSpace: 'nowrap',
+    pointerEvents: 'none',
+    userSelect: 'none',
+    display: showDimensions ? 'block' : 'none',
+  });
+  selectionBox.appendChild(dimLabel);
+
+  // ── Resize handles ────────────────────────────────────────────────────────
+  const handlePositions = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'];
+  const cursorMap = {
+    nw: 'nwse-resize', n: 'ns-resize', ne: 'nesw-resize', e: 'ew-resize',
+    se: 'nwse-resize', s: 'ns-resize', sw: 'nesw-resize', w: 'ew-resize',
+  };
+  const handles = {};
+
+  handlePositions.forEach((pos) => {
+    const h = document.createElement('div');
+    Object.assign(h.style, {
+      position: 'absolute',
+      width: HANDLE_SIZE + 'px',
+      height: HANDLE_SIZE + 'px',
+      background: '#bbb',
+      border: '1px solid #fff',
+      borderRadius: '2px',
+      cursor: cursorMap[pos],
+      zIndex: '1',
+    });
+    h.dataset.handle = pos;
+    handles[pos] = h;
+    selectionBox.appendChild(h);
+  });
+
+  function positionHandles() {
+    const w = selectionBox.offsetWidth;
+    const h = selectionBox.offsetHeight;
+    const set = (el, l, t) => { el.style.left = l + 'px'; el.style.top = t + 'px'; };
+    set(handles.nw, -HANDLE_HALF, -HANDLE_HALF);
+    set(handles.n, w / 2 - HANDLE_HALF, -HANDLE_HALF);
+    set(handles.ne, w - HANDLE_HALF, -HANDLE_HALF);
+    set(handles.e, w - HANDLE_HALF, h / 2 - HANDLE_HALF);
+    set(handles.se, w - HANDLE_HALF, h - HANDLE_HALF);
+    set(handles.s, w / 2 - HANDLE_HALF, h - HANDLE_HALF);
+    set(handles.sw, -HANDLE_HALF, h - HANDLE_HALF);
+    set(handles.w, -HANDLE_HALF, h / 2 - HANDLE_HALF);
+  }
+
+  // ── State ─────────────────────────────────────────────────────────────────
+  let phase = 'drawing'; // 'drawing' | 'idle' | 'moving' | 'resizing'
+  let startX, startY;
+  let dragOffsetX, dragOffsetY;
+  let activeHandle = null;
+  let resizeOrigin = {};
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  function getBox() {
+    return {
+      x: parseInt(selectionBox.style.left, 10),
+      y: parseInt(selectionBox.style.top, 10),
+      w: parseInt(selectionBox.style.width, 10),
+      h: parseInt(selectionBox.style.height, 10),
+    };
+  }
+
+  function setBox(x, y, w, h) {
+    selectionBox.style.left = x + 'px';
+    selectionBox.style.top = y + 'px';
+    selectionBox.style.width = w + 'px';
+    selectionBox.style.height = h + 'px';
+    dimLabel.textContent = `${w} × ${h}`;
+    positionHandles();
+  }
+
+  function clamp(val, min, max) {
+    return Math.max(min, Math.min(max, val));
+  }
+
+  // ── DOM setup ─────────────────────────────────────────────────────────────
   document.body.appendChild(overlay);
 
   function removeOverlay() {
@@ -52,63 +154,116 @@ export function enableSelectionMode() {
   document.addEventListener('keydown', handleKeyDown);
   activeCleanup = removeOverlay;
 
-  // Mouse events for selection
-  overlay.addEventListener('mousedown', (e) => {
-    isSelecting = true;
-    startX = e.clientX;
-    startY = e.clientY;
-
-    selectionBox.style.left = startX + 'px';
-    selectionBox.style.top = startY + 'px';
-    selectionBox.style.width = '0';
-    selectionBox.style.height = '0';
-    selectionBox.style.display = 'block';
-  });
-
-  overlay.addEventListener('mousemove', (e) => {
-    if (!isSelecting) return;
-
-    const width = e.clientX - startX;
-    const height = e.clientY - startY;
-
-    selectionBox.style.width = Math.abs(width) + 'px';
-    selectionBox.style.height = Math.abs(height) + 'px';
-    selectionBox.style.left = (width < 0 ? e.clientX : startX) + 'px';
-    selectionBox.style.top = (height < 0 ? e.clientY : startY) + 'px';
-  });
-
-  overlay.addEventListener('mouseup', (e) => {
-    if (!isSelecting) return;
-    isSelecting = false;
-    // Get the coordinates of the selection
+  // ── Auto-capture ──────────────────────────────────────────────────────────
+  // The full tab was already captured by the side panel before the overlay was
+  // shown. Every mouseup just sends crop coordinates — no visibility toggling.
+  function captureArea() {
     const rect = selectionBox.getBoundingClientRect();
+    if (rect.width < 5 || rect.height < 5) return;
 
-    // Store the selection coordinates and pixel ratio
     const devicePixelRatio = window.devicePixelRatio || 1;
-    const screenshotArea = {
+    const area = {
       x: Math.round(rect.left * devicePixelRatio),
       y: Math.round(rect.top * devicePixelRatio),
       width: Math.round(rect.width * devicePixelRatio),
       height: Math.round(rect.height * devicePixelRatio),
     };
 
-    // Hide the overlay visually before removing it so the browser paints
-    // a clean frame without the selection UI before the screenshot is taken.
-    overlay.style.display = 'none';
-    removeOverlay();
-
-    // Double requestAnimationFrame: the first fires before the next paint,
-    // the second fires after it — ensuring the overlay is gone from the
-    // composited frame that captureVisibleTab will capture.
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        chrome.runtime.sendMessage({
-          action: 'areaScreenshot',
-          area: screenshotArea,
-          devicePixelRatio: devicePixelRatio,
-        });
-      });
+    chrome.runtime.sendMessage({
+      action: 'areaCropUpdate',
+      area,
+      devicePixelRatio,
     });
+  }
+
+  // ── Mouse interaction ─────────────────────────────────────────────────────
+  overlay.addEventListener('mousedown', (e) => {
+    const target = e.target;
+
+    // Click on a resize handle
+    if (target.dataset && target.dataset.handle) {
+      e.stopPropagation();
+      phase = 'resizing';
+      activeHandle = target.dataset.handle;
+      const box = getBox();
+      resizeOrigin = { x: box.x, y: box.y, w: box.w, h: box.h };
+      startX = e.clientX;
+      startY = e.clientY;
+      return;
+    }
+
+    // Click inside the selection box → move
+    if (target === selectionBox || selectionBox.contains(target)) {
+      e.stopPropagation();
+      phase = 'moving';
+      const box = getBox();
+      dragOffsetX = e.clientX - box.x;
+      dragOffsetY = e.clientY - box.y;
+      return;
+    }
+
+    // Click on the overlay → start a new selection
+    phase = 'drawing';
+    startX = e.clientX;
+    startY = e.clientY;
+    setBox(startX, startY, 0, 0);
+    selectionBox.style.display = 'block';
+  });
+
+  overlay.addEventListener('mousemove', (e) => {
+    const maxW = overlay.offsetWidth;
+    const maxH = overlay.offsetHeight;
+
+    if (phase === 'drawing') {
+      const cx = clamp(e.clientX, 0, maxW);
+      const cy = clamp(e.clientY, 0, maxH);
+      const x = Math.min(cx, startX);
+      const y = Math.min(cy, startY);
+      const w = Math.abs(cx - startX);
+      const h = Math.abs(cy - startY);
+      setBox(x, y, w, h);
+      return;
+    }
+
+    if (phase === 'moving') {
+      const box = getBox();
+      let nx = e.clientX - dragOffsetX;
+      let ny = e.clientY - dragOffsetY;
+      nx = clamp(nx, 0, maxW - box.w);
+      ny = clamp(ny, 0, maxH - box.h);
+      setBox(nx, ny, box.w, box.h);
+      return;
+    }
+
+    if (phase === 'resizing') {
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      let { x, y, w, h } = resizeOrigin;
+
+      if (activeHandle.includes('w')) { x += dx; w -= dx; }
+      if (activeHandle.includes('e')) { w += dx; }
+      if (activeHandle.includes('n')) { y += dy; h -= dy; }
+      if (activeHandle.includes('s')) { h += dy; }
+
+      const minSize = 10;
+      if (w < minSize) { if (activeHandle.includes('w')) x = resizeOrigin.x + resizeOrigin.w - minSize; w = minSize; }
+      if (h < minSize) { if (activeHandle.includes('n')) y = resizeOrigin.y + resizeOrigin.h - minSize; h = minSize; }
+      x = clamp(x, 0, maxW - minSize);
+      y = clamp(y, 0, maxH - minSize);
+      if (x + w > maxW) w = maxW - x;
+      if (y + h > maxH) h = maxH - y;
+
+      setBox(x, y, w, h);
+      return;
+    }
+  });
+
+  overlay.addEventListener('mouseup', () => {
+    if (phase === 'drawing' || phase === 'resizing' || phase === 'moving') {
+      phase = 'idle';
+      activeHandle = null;
+      captureArea();
+    }
   });
 }
 

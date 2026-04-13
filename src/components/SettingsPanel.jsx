@@ -6,6 +6,8 @@ import {
   loadCustomInstruction,
   saveCustomInstruction,
   getDefaultInstruction,
+  loadShowSelectionDimensions,
+  saveShowSelectionDimensions,
 } from '../services/settingsService';
 
 export default function SettingsPanel({ onCustomInstructionChange }) {
@@ -14,6 +16,7 @@ export default function SettingsPanel({ onCustomInstructionChange }) {
   const [customInstruction, setCustomInstruction] = useState('');
   const [apiKeySaved, setApiKeySaved] = useState(false);
   const [instructionSaved, setInstructionSaved] = useState(false);
+  const [showDimensions, setShowDimensions] = useState(false);
 
   // Load settings when component mounts
   useEffect(() => {
@@ -27,6 +30,10 @@ export default function SettingsPanel({ onCustomInstructionChange }) {
       // Load custom instruction
       const instruction = await loadCustomInstruction();
       setCustomInstruction(instruction || getDefaultInstruction());
+
+      // Load selection dimensions toggle
+      const dims = await loadShowSelectionDimensions();
+      setShowDimensions(dims);
     };
 
     loadSettings();
@@ -105,6 +112,28 @@ export default function SettingsPanel({ onCustomInstructionChange }) {
           Customize how Gemini analyzes your screenshots. Default: "What's in
           this image? Please describe it in detail."
         </p>
+      </div>
+
+      {/* Delimiter between sections */}
+      <hr className="section-divider" />
+
+      {/* Selection Settings Section */}
+      <div className="settings-section">
+        <h2>Selection Overlay</h2>
+        <div className="input-group">
+          <label className="toggle-label">
+            <input
+              type="checkbox"
+              checked={showDimensions}
+              onChange={async (e) => {
+                const val = e.target.checked;
+                setShowDimensions(val);
+                await saveShowSelectionDimensions(val);
+              }}
+            />
+            Show dimensions when selecting area
+          </label>
+        </div>
       </div>
 
       {/* Delimiter between sections */}

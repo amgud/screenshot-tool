@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Header from './components/Header';
 import PreviewArea from './components/PreviewArea';
 import ResponseContainer from './components/ResponseContainer';
@@ -37,6 +37,9 @@ export default function SidePanel() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSelectingArea, setIsSelectingArea] = useState(false);
 
+  // Stores the last full-tab capture so resize/move can re-crop without blinking
+  const fullCaptureRef = useRef(null);
+
   // Initialize settings and message listeners
   useEffect(() => {
     // Load settings
@@ -54,40 +57,20 @@ export default function SidePanel() {
         return true;
       }
 
-      if (request.action === 'areaScreenshot') {
-        setIsSelectingArea(false);
-        console.log('Area screenshot request received:', request);
-        // Capture the selected area
-        chrome.tabs.captureVisibleTab(
-          null,
-          { format: 'png' },
-          async (dataUrl) => {
-            if (chrome.runtime.lastError) {
-              console.error(
-                'Error capturing screenshot:',
-                chrome.runtime.lastError
-              );
-              return;
-            }
+      // Re-crop from the pre-captured full tab image
+      if (request.action === 'areaCropUpdate') {
+        if (!fullCaptureRef.current) return true;
 
-            try {
-              // Process the area screenshot
-              const croppedDataUrl = await processAreaScreenshot(
-                dataUrl,
-                request.area,
-                request.devicePixelRatio
-              );
-
-              // Update the screenshot state
-              setCurrentScreenshot(croppedDataUrl);
-              setResponseData(null);
-            } catch (error) {
-              console.error('Error processing area screenshot:', error);
-            }
-
-            return true;
-          }
-        );
+        const { dataUrl, devicePixelRatio } = fullCaptureRef.current;
+        processAreaScreenshot(dataUrl, request.area, devicePixelRatio)
+          .then((croppedDataUrl) => {
+            setCurrentScreenshot(croppedDataUrl);
+            setResponseData(null);
+          })
+          .catch((error) => {
+            console.error('Error re-cropping screenshot:', error);
+          });
+        return true;
       }
 
       if (request.action === 'closeSidePanel') {
@@ -159,25 +142,50 @@ export default function SidePanel() {
       }
 
       try {
-        // Send message to content script to enable selection mode
-        chrome.tabs.sendMessage(
-          tabs[0].id,
-          { action: 'enableSelection' },
-          (response) => {
+        // Pre-capture the full tab before showing the overlay so that every
+        // subsequent crop is instant and the overlay never needs to hide.
+        chrome.tabs.captureVisibleTab(
+          null,
+          { format: 'png' },
+          (dataUrl) => {
             if (chrome.runtime.lastError) {
-              console.error(
-                'Error enabling selection:',
-                chrome.runtime.lastError
-              );
-              setResponseData({
-                type: 'error',
-                message:
-                  'Error enabling selection. Please refresh the page and try again.',
-              });
+              console.error('Error pre-capturing tab:', chrome.runtime.lastError);
               return;
             }
-            console.log('Selection mode enabled', response);
-            setIsSelectingArea(true);
+
+            // Store for re-crops
+            fullCaptureRef.current = {
+              dataUrl,
+              devicePixelRatio: window.devicePixelRatio || 1,
+            };
+
+            // Load the showDimensions setting, then enable selection
+            chrome.storage.local.get(['showSelectionDimensions'], (result) => {
+              const options = {
+                showDimensions: result.showSelectionDimensions || false,
+              };
+
+              chrome.tabs.sendMessage(
+                tabs[0].id,
+                { action: 'enableSelection', options },
+                (response) => {
+                  if (chrome.runtime.lastError) {
+                    console.error(
+                      'Error enabling selection:',
+                      chrome.runtime.lastError
+                    );
+                    setResponseData({
+                      type: 'error',
+                      message:
+                        'Error enabling selection. Please refresh the page and try again.',
+                    });
+                    return;
+                  }
+                  console.log('Selection mode enabled', response);
+                  setIsSelectingArea(true);
+                }
+              );
+            });
           }
         );
       } catch (error) {
